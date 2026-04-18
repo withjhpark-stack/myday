@@ -438,20 +438,15 @@ let SB_KEY = localStorage.getItem('myday_sb_key') || '';
 let syncOnline = false;
 let syncTimer = null;
 
-function sbHeaders(extra){
-  const h = {
-    'Content-Type': 'application/json',
-    'apikey': SB_KEY,
-    'Authorization': 'Bearer ' + SB_KEY
-  };
-  if(extra) Object.assign(h, extra);
-  return h;
-}
-
 async function sbFetch(method, path, body, extra){
-  const opts = { method, headers: sbHeaders(extra) };
+  // apikey를 URL 쿼리로 전달 (CORS 헤더 문제 우회)
+  const sep = path.includes('?') ? '&' : '?';
+  const url = SB_URL + '/rest/v1/' + path + sep + 'apikey=' + encodeURIComponent(SB_KEY);
+  const headers = { 'Content-Type': 'application/json' };
+  if(extra) Object.assign(headers, extra);
+  const opts = { method, headers };
   if(body != null) opts.body = JSON.stringify(body);
-  const res = await fetch(SB_URL + '/rest/v1/' + path, opts);
+  const res = await fetch(url, opts);
   const text = await res.text();
   let json = null;
   try{ json = text ? JSON.parse(text) : null; } catch(e){}
