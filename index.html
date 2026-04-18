@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="My Day">
+<meta name="theme-color" content="#0a0a10">
+<title>My Day</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- ════════════════════════════════════════════════════════════
+     SETUP: 처음 사용 시 아래 두 값을 채우세요.
+     1) https://supabase.com 에서 무료 프로젝트 생성
+     2) Settings > API Keys 에서 URL과 Publishable key 복사
+     ════════════════════════════════════════════════════════════ -->
+<script>
+  const SUPABASE_URL = localStorage.getItem('myday_sb_url') || '';
+  const SUPABASE_KEY = localStorage.getItem('myday_sb_key') || '';
+</script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0a10;--bg2:#111118;--bg3:#18181f;--bg4:#20202a;--bg5:#28283a;
+  --line:#ffffff0d;--line2:#ffffff18;--line3:#ffffff28;
+  --txt:#eeeef5;--txt2:#8888a8;--txt3:#44445a;
+  --acc:#6c63ff;--acc2:#9d97ff;--accl:#6c63ff1a;
+  --green:#2dd4a0;--greenl:#2dd4a015;
+  --amber:#f5a623;--amberl:#f5a62315;
+  --red:#f96060;--redl:#f9606015;
+  --pink:#e879a0;--pinkl:#e879a015;
+  --blue:#38bdf8;--bluel:#38bdf815;
+  --r:12px;--rsm:8px;--rlg:18px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Noto Sans KR',sans-serif;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh;position:relative;overflow:hidden}
+
+/* ── SETUP SCREEN ── */
+#setupScreen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px}
+.setup-box{background:var(--bg2);border:1px solid var(--line3);border-radius:var(--rlg);padding:28px;width:100%;max-width:440px}
+.setup-logo{font-size:28px;font-weight:700;color:var(--acc2);font-family:'DM Mono',monospace;letter-spacing:-0.02em;margin-bottom:6px}
+.setup-sub{font-size:13px;color:var(--txt2);margin-bottom:24px;line-height:1.6}
+.setup-step{display:flex;gap:12px;margin-bottom:14px;background:var(--bg3);border-radius:var(--r);padding:12px}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'DM Mono',monospace}
+.step-txt{font-size:13px;color:var(--txt2);line-height:1.6}
+.step-txt a{color:var(--acc2);text-decoration:none}
+.setup-input-label{font-size:11px;color:var(--txt3);font-family:'DM Mono',monospace;letter-spacing:0.06em;margin-bottom:5px;display:block}
+.setup-input{width:100%;background:var(--bg3);border:1px solid var(--line2);border-radius:var(--rsm);padding:11px 13px;color:var(--txt);font-size:13px;font-family:'DM Mono',monospace;outline:none;margin-bottom:12px}
+.setup-input:focus{border-color:var(--acc)}
+.setup-btn{width:100%;padding:13px;background:var(--acc);border:none;border-radius:var(--rsm);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;margin-top:4px}
+.setup-btn:active{opacity:0.85}
+.setup-skip{display:block;text-align:center;margin-top:12px;font-size:12px;color:var(--txt3);cursor:pointer;text-decoration:underline}
+.setup-err{color:var(--red);font-size:12px;margin-bottom:10px;display:none}
+.setup-sql{background:var(--bg4);border-radius:var(--rsm);padding:12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--txt2);line-height:1.7;margin-top:10px;white-space:pre;overflow-x:auto;border:1px solid var(--line2)}
+
+/* ── TOPBAR ── */
+#topbar{padding:14px 18px 0;flex-shrink:0}
+.tb-row{display:flex;align-items:center;justify-content:space-between}
+.app-name{font-size:11px;font-family:'DM Mono',monospace;color:var(--txt3);letter-spacing:0.12em}
+.sync-pill{display:flex;align-items:center;gap:5px;font-size:11px;font-family:'DM Mono',monospace;padding:4px 10px;border-radius:20px;cursor:pointer;transition:all 0.2s;border:1px solid var(--line2)}
+.sync-pill.online{color:var(--green);border-color:var(--green)33;background:var(--greenl)}
+.sync-pill.offline{color:var(--txt3);background:var(--bg3)}
+.sync-pill.syncing{color:var(--amber);border-color:var(--amber)33;background:var(--amberl)}
+.sync-dot{width:6px;height:6px;border-radius:50%}
+.sync-pill.online .sync-dot{background:var(--green)}
+.sync-pill.offline .sync-dot{background:var(--txt3)}
+.sync-pill.syncing .sync-dot{background:var(--amber);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.date-block{margin-top:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.date-main{font-size:24px;font-weight:700;letter-spacing:-0.02em}
+.date-sub{font-size:12px;color:var(--txt2);margin-top:2px;font-family:'DM Mono',monospace}
+
+/* ── TABS ── */
+#tabStrip{display:flex;gap:3px;padding:10px 18px;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+#tabStrip::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;border:none;cursor:pointer;transition:all 0.18s;background:var(--bg3);color:var(--txt2);font-family:'Noto Sans KR',sans-serif}
+.tab.active{background:var(--acc);color:#fff}
+
+/* ── CONTENT ── */
+#content{flex:1;overflow-y:auto;padding:4px 18px 90px;scrollbar-width:none}
+#content::-webkit-scrollbar{display:none}
+
+/* ── BOTTOM NAV ── */
+#bnav{position:absolute;bottom:0;left:0;right:0;background:rgba(10,10,16,0.92);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(20px);z-index:40}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0;border:none;background:none;cursor:pointer;color:var(--txt3);font-size:10px;font-family:'Noto Sans KR',sans-serif;transition:color 0.15s}
+.ni.active{color:var(--acc2)}
+.ni-icon{font-size:20px;line-height:1}
+
+/* ── CARDS / ITEMS ── */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px}
+.sec-lbl{font-size:10px;font-weight:500;letter-spacing:0.1em;color:var(--txt3);text-transform:uppercase;font-family:'DM Mono',monospace}
+.add-btn{width:24px;height:24px;border-radius:50%;background:var(--bg4);border:1px solid var(--line2);color:var(--txt2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0}
+.add-btn:active{background:var(--acc);color:#fff;border-color:var(--acc)}
+
+.todo-row{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);margin-bottom:7px;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden}
+.todo-row.done-row{opacity:0.45}
+.check{width:19px;height:19px;border-radius:50%;border:1.5px solid var(--line3);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all 0.2s;background:transparent}
+.check.on{background:var(--green);border-color:var(--green)}
+.check.on::after{content:'';width:5px;height:9px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(42deg) translateY(-1px);display:block}
+.todo-body{flex:1;min-width:0}
+.todo-title{font-size:13px;line-height:1.45;word-break:break-all}
+.done-row .todo-title{text-decoration:line-through;color:var(--txt3)}
+.todo-meta{display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap}
+.badge{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500;font-family:'DM Mono',monospace;white-space:nowrap}
+.b-red{background:var(--redl);color:var(--red)}
+.b-amb{background:var(--amberl);color:var(--amber)}
+.b-grn{background:var(--greenl);color:var(--green)}
+.b-acc{background:var(--accl);color:var(--acc2)}
+.b-blue{background:var(--bluel);color:var(--blue)}
+.b-pink{background:var(--pinkl);color:var(--pink)}
+.done-date{font-size:10px;color:var(--green);font-family:'DM Mono',monospace}
+.del-btn{background:none;border:none;color:var(--txt3);font-size:16px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0}
+.del-btn:active{color:var(--red)}
+
+/* ── PROJECTS ── */
+.proj-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:8px;position:relative}
+.proj-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;cursor:pointer}
+.proj-title{font-size:14px;font-weight:500;line-height:1.35}
+.proj-due{font-size:10px;font-family:'DM Mono',monospace;color:var(--txt3);flex-shrink:0;margin-top:2px}
+.proj-due.near{color:var(--amber)}.proj-due.overdue{color:var(--red)}.proj-due.done-lbl{color:var(--green)}
+.prog-wrap{margin-top:10px}
+.prog-info{display:flex;justify-content:space-between;font-size:10px;color:var(--txt2);margin-bottom:4px;font-family:'DM Mono',monospace}
+.prog-track{height:3px;background:var(--bg5);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;border-radius:2px;background:var(--green);transition:width 0.4s}
+.prog-fill.warn{background:var(--amber)}.prog-fill.danger{background:var(--red)}
+.sub-list{display:none;border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
+.sub-list.open{display:block}
+.sub-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.sub-item:last-of-type{border-bottom:none}
+.ck-sm{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--line3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.ck-sm.on{background:var(--green);border-color:var(--green)}
+.ck-sm.on::after{content:'';width:4px;height:7px;border:1.5px solid #fff;border-top:none;border-left:none;transform:rotate(42deg) translateY(-1px);display:block}
+.sub-txt{font-size:12px;flex:1;color:var(--txt2)}.sub-txt.done{text-decoration:line-through;color:var(--txt3)}
+.sub-done-date{font-size:10px;color:var(--green);font-family:'DM Mono',monospace;margin-right:4px}
+.proj-btns{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.pj-btn{flex:1;padding:7px 4px;background:var(--bg3);border:1px solid var(--line2);border-radius:var(--rsm);color:var(--txt2);font-size:11px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;text-align:center}
+.pj-btn.ok{background:var(--greenl);border-color:var(--green)33;color:var(--green)}
+.pj-btn.danger{background:var(--redl);border-color:var(--red)33;color:var(--red)}
+
+/* ── SCHEDULE ── */
+.ev-item{display:flex;gap:10px;align-items:flex-start;padding:12px 13px;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);margin-bottom:7px;position:relative;overflow:hidden}
+.ev-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.ev-tc{font-family:'DM Mono',monospace;font-size:11px;color:var(--txt2);flex-shrink:0;line-height:1.7;text-align:right;min-width:38px}
+.ev-info{flex:1}.ev-title{font-size:13px;font-weight:500}.ev-note{font-size:11px;color:var(--txt2);margin-top:2px}
+.ev-past{opacity:0.4}
+.date-sep{font-size:10px;color:var(--txt3);font-family:'DM Mono',monospace;padding:10px 0 3px}
+
+/* ── DIARY ── */
+.mood-strip{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.mood-pill{padding:6px 11px;border-radius:18px;font-size:17px;background:var(--bg3);border:1.5px solid var(--line);cursor:pointer;transition:all 0.15s;line-height:1}
+.mood-pill.on{border-color:var(--acc);background:var(--accl)}
+.diary-ta{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:13px;color:var(--txt);font-size:13px;line-height:1.75;resize:none;min-height:160px;font-family:'Noto Sans KR',sans-serif;outline:none;transition:border-color 0.2s}
+.diary-ta:focus{border-color:var(--acc)}
+.diary-ta::placeholder{color:var(--txt3)}
+.save-btn{margin-top:9px;width:100%;padding:12px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
+.save-btn:active{opacity:0.8}
+.diary-entry{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:8px}
+.de-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.de-date{font-size:11px;font-family:'DM Mono',monospace;color:var(--txt2)}
+.de-body{font-size:13px;line-height:1.7;white-space:pre-wrap;color:var(--txt)}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:4px}
+.stat-box{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:12px 8px;text-align:center}
+.stat-num{font-size:22px;font-weight:700;font-family:'DM Mono',monospace;color:var(--acc2)}
+.stat-lbl{font-size:10px;color:var(--txt3);margin-top:2px;font-weight:500}
+
+/* ── STOCKS ── */
+.stock-add-row{display:flex;gap:8px;margin-bottom:12px}
+.stock-input{flex:1;background:var(--bg2);border:1px solid var(--line2);border-radius:var(--rsm);padding:10px 12px;color:var(--txt);font-size:13px;font-family:'DM Mono',monospace;outline:none;text-transform:uppercase}
+.stock-input::placeholder{text-transform:none;color:var(--txt3)}
+.stock-input:focus{border-color:var(--acc)}
+.stock-add-go{padding:10px 16px;background:var(--acc);border:none;border-radius:var(--rsm);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Mono',monospace}
+.stock-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:8px;position:relative}
+.stock-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
+.stock-ticker{font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--txt)}
+.stock-name{font-size:11px;color:var(--txt2);margin-top:1px}
+.stock-price{text-align:right}
+.stock-val{font-size:18px;font-weight:700;font-family:'DM Mono',monospace}
+.stock-val.up{color:var(--green)}.stock-val.dn{color:var(--red)}.stock-val.flat{color:var(--txt2)}
+.stock-chg{font-size:11px;font-family:'DM Mono',monospace;margin-top:1px}
+.stock-chg.up{color:var(--green)}.stock-chg.dn{color:var(--red)}.stock-chg.flat{color:var(--txt2)}
+.stock-chart{width:100%;height:72px;margin-top:8px}
+.stock-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.stock-meta{font-size:10px;color:var(--txt3);font-family:'DM Mono',monospace}
+.stock-del{background:none;border:none;color:var(--txt3);font-size:15px;cursor:pointer;padding:0}
+.stock-del:active{color:var(--red)}
+.stock-loading{text-align:center;padding:20px;color:var(--txt3);font-size:12px;font-family:'DM Mono',monospace}
+.stock-err{color:var(--red);font-size:11px;margin-top:4px}
+.chart-range{display:flex;gap:4px;margin-top:8px}
+.cr-btn{padding:3px 8px;border-radius:6px;font-size:10px;font-family:'DM Mono',monospace;background:var(--bg3);border:1px solid var(--line);color:var(--txt2);cursor:pointer}
+.cr-btn.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;backdrop-filter:blur(4px)}
+.overlay.open{opacity:1;pointer-events:all}
+.sheet{background:var(--bg2);border-radius:var(--rlg) var(--rlg) 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));width:100%;max-width:500px;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:88vh;overflow-y:auto}
+.overlay.open .sheet{transform:translateY(0)}
+.sheet-handle{width:34px;height:4px;background:var(--line3);border-radius:2px;margin:0 auto 16px;cursor:pointer}
+.sheet-title{font-size:15px;font-weight:700;margin-bottom:14px}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:10px;color:var(--txt2);margin-bottom:4px;font-weight:500;font-family:'DM Mono',monospace;letter-spacing:0.06em}
+.field input,.field textarea,.field select{width:100%;background:var(--bg3);border:1px solid var(--line2);border-radius:var(--rsm);padding:10px 12px;color:var(--txt);font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;transition:border-color 0.2s;-webkit-appearance:none}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--acc)}
+.field select option{background:var(--bg3)}
+.field textarea{resize:none;height:72px;line-height:1.5}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-btns{display:flex;gap:8px;margin-top:14px}
+.m-cancel{flex:1;padding:11px;background:var(--bg3);border:1px solid var(--line2);border-radius:var(--rsm);color:var(--txt2);font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
+.m-ok{flex:2;padding:11px;background:var(--acc);border:none;border-radius:var(--rsm);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
+.m-ok:active,.m-cancel:active{opacity:0.8}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg4);color:var(--txt);border:1px solid var(--line3);padding:9px 18px;border-radius:20px;font-size:12px;font-weight:500;opacity:0;transition:all 0.22s;pointer-events:none;z-index:500;white-space:nowrap;box-shadow:var(--shadow)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:36px 20px;color:var(--txt3);font-size:12px;line-height:1.8}
+.empty-icon{font-size:30px;margin-bottom:8px}
+
+/* ── PROGRESS BAR MINI ── */
+.day-prog-bar{background:var(--bg3);border-radius:var(--r);padding:12px;margin-bottom:4px}
+.dpb-row{display:flex;justify-content:space-between;font-size:11px;font-family:'DM Mono',monospace;color:var(--txt2);margin-bottom:6px}
+.dpb-track{height:5px;background:var(--bg5);border-radius:3px;overflow:hidden}
+.dpb-fill{height:100%;border-radius:3px;background:var(--green);transition:width 0.4s}
+
+/* ── PC LAYOUT ── */
+@media(min-width:768px){
+  #app{flex-direction:row;max-width:1200px;margin:0 auto}
+  #sidebar{width:240px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 0;overflow-y:auto}
+  #main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  #topbar{padding:18px 24px 0}
+  #tabStrip{padding:10px 24px;gap:4px}
+  #content{padding:4px 24px 40px}
+  #bnav{display:none}
+  .pc-nav{display:flex;flex-direction:column;gap:2px;padding:0 10px;flex:1}
+  .pc-ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);border:none;background:none;color:var(--txt2);font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;width:100%;text-align:left;transition:all 0.15s}
+  .pc-ni:hover{background:var(--bg3);color:var(--txt)}
+  .pc-ni.active{background:var(--accl);color:var(--acc2);font-weight:500}
+  .pc-ni-icon{font-size:17px;width:22px;text-align:center}
+  .pc-logo{font-size:16px;font-weight:700;color:var(--acc2);font-family:'DM Mono',monospace;padding:0 22px 18px;border-bottom:1px solid var(--line);margin-bottom:12px}
+  .pc-sync{padding:10px 22px;margin-top:auto;border-top:1px solid var(--line)}
+  .stocks-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .stocks-grid .stock-card{margin-bottom:0}
+}
+@media(max-width:767px){
+  #sidebar{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- SETUP SCREEN -->
+<div id="setupScreen" style="display:none">
+  <div class="setup-box">
+    <div class="setup-logo">My Day</div>
+    <div class="setup-sub">PC ↔ 핸드폰 동기화를 위해 Supabase 연결이 필요해요.<br>무료로 사용 가능합니다 (계정 생성 5분 소요)</div>
+
+    <div class="setup-step">
+      <div class="step-num">1</div>
+      <div class="step-txt"><a href="https://supabase.com" target="_blank">supabase.com</a> 에서 무료 계정 생성 후 새 프로젝트를 만드세요</div>
+    </div>
+    <div class="setup-step">
+      <div class="step-num">2</div>
+      <div class="step-txt">SQL Editor에서 아래 코드를 실행해 테이블을 만드세요:
+        <div class="setup-sql">create table if not exists myday_data (
+  key text primary key,
+  value jsonb,
+  updated_at timestamptz default now()
+);
+alter table myday_data enable row level security;
+drop policy if exists "public rw" on myday_data;
+create policy "public rw" on myday_data
+  for all to anon, authenticated
+  using (true) with check (true);</div>
+      </div>
+    </div>
+    <div class="setup-step">
+      <div class="step-num">3</div>
+      <div class="step-txt">
+        Settings → <b>General</b> → <b>Project URL</b> 복사<br>
+        Settings → <b>API Keys</b> → <b>Publishable key</b> (sb_publishable_…) 복사
+      </div>
+    </div>
+
+    <div class="setup-err" id="setupErr">연결에 실패했습니다. URL과 Key를 다시 확인해 주세요.</div>
+    <label class="setup-input-label">PROJECT URL (General 페이지에서 복사)</label>
+    <input class="setup-input" id="sbUrl" placeholder="https://xxxxxxxxxxxx.supabase.co" type="url">
+    <label class="setup-input-label">PUBLISHABLE KEY (API Keys 페이지에서 복사)</label>
+    <input class="setup-input" id="sbKey" placeholder="sb_publishable_pc...">
+    <button class="setup-btn" onclick="connectSupabase()">연결하기</button>
+    <span class="setup-skip" onclick="skipSync()">동기화 없이 로컬로만 사용하기</span>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+  <!-- PC Sidebar -->
+  <div id="sidebar">
+    <div class="pc-logo">MY DAY</div>
+    <div class="pc-nav">
+      <button class="pc-ni active" onclick="switchTab('today',this,true)"><span class="pc-ni-icon">☀️</span>오늘</button>
+      <button class="pc-ni" onclick="switchTab('daily',this,true)"><span class="pc-ni-icon">✅</span>매일 할일</button>
+      <button class="pc-ni" onclick="switchTab('projects',this,true)"><span class="pc-ni-icon">🎯</span>장기 목표</button>
+      <button class="pc-ni" onclick="switchTab('schedule',this,true)"><span class="pc-ni-icon">📅</span>스케줄</button>
+      <button class="pc-ni" onclick="switchTab('diary',this,true)"><span class="pc-ni-icon">📔</span>기록</button>
+      <button class="pc-ni" onclick="switchTab('stocks',this,true)"><span class="pc-ni-icon">📈</span>주식</button>
+    </div>
+    <div class="pc-sync">
+      <div class="sync-pill" id="syncPillPC" onclick="manualSync()">
+        <div class="sync-dot"></div><span id="syncLblPC">오프라인</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Area -->
+  <div id="main">
+    <div id="topbar">
+      <div class="tb-row">
+        <span class="app-name">MY DAY</span>
+        <div class="sync-pill offline" id="syncPill" onclick="manualSync()">
+          <div class="sync-dot"></div><span id="syncLbl">오프라인</span>
+        </div>
+      </div>
+      <div class="date-block">
+        <div class="date-main" id="dateMain"></div>
+        <div class="date-sub" id="dateSub"></div>
+      </div>
+    </div>
+
+    <div id="tabStrip">
+      <button class="tab active" onclick="switchTab('today',this)">오늘</button>
+      <button class="tab" onclick="switchTab('daily',this)">매일 할일</button>
+      <button class="tab" onclick="switchTab('projects',this)">장기 목표</button>
+      <button class="tab" onclick="switchTab('schedule',this)">스케줄</button>
+      <button class="tab" onclick="switchTab('diary',this)">기록</button>
+      <button class="tab" onclick="switchTab('stocks',this)">주식 📈</button>
+    </div>
+
+    <div id="content"></div>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav id="bnav">
+    <button class="ni active" onclick="switchTab('today',this,true)"><span class="ni-icon">☀️</span>오늘</button>
+    <button class="ni" onclick="switchTab('daily',this,true)"><span class="ni-icon">✅</span>매일</button>
+    <button class="ni" onclick="switchTab('projects',this,true)"><span class="ni-icon">🎯</span>목표</button>
+    <button class="ni" onclick="switchTab('schedule',this,true)"><span class="ni-icon">📅</span>일정</button>
+    <button class="ni" onclick="switchTab('diary',this,true)"><span class="ni-icon">📔</span>기록</button>
+    <button class="ni" onclick="switchTab('stocks',this,true)"><span class="ni-icon">📈</span>주식</button>
+  </nav>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="sheet" id="sheet">
+    <div class="sheet-handle" onclick="closeModal()"></div>
+    <div id="sheetContent"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONFIG & VERSION
+// ═══════════════════════════════════════════════════════════
+const APP_VERSION = 3;
+const DATA_KEY = 'myday_v3';
+
+const DAYS = ['일','월','화','수','목','금','토'];
+const DAYSFULL = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+const moods = ['😊','😄','😐','😔','😤','😴','🥰','😰'];
+const CAT_COL = {'업무':'acc','개인':'grn','약속':'pink','건강':'red','학습':'amb'};
+const PRI_CLS = {'높음':'b-red','보통':'b-amb','낮음':'b-grn'};
+
+const today = new Date();
+const todayStr = today.toISOString().split('T')[0];
+
+// ═══════════════════════════════════════════════════════════
+// DATA MIGRATION — 안전한 버전 업그레이드
+// ═══════════════════════════════════════════════════════════
+function defaultData(){
+  return {
+    _version: APP_VERSION,
+    dailyTodos: [],
+    projects: [],
+    events: [],
+    diaries: {},
+    stocks: [],        // {ticker, name, range:'1mo'}
+  };
+}
+
+function migrate(raw){
+  if(!raw) return defaultData();
+  // v1→v2: dailyTodos 없던 버전
+  if(!raw.dailyTodos) raw.dailyTodos = raw.todos ? raw.todos.filter(t=>t.repeat) : [];
+  // v2→v3: stocks 추가
+  if(!raw.stocks) raw.stocks = [];
+  // ensure all fields
+  const def = defaultData();
+  Object.keys(def).forEach(k=>{ if(raw[k]===undefined) raw[k]=def[k]; });
+  raw._version = APP_VERSION;
+  return raw;
+}
+
+// ═══════════════════════════════════════════════════════════
+// LOCAL STORAGE
+// ═══════════════════════════════════════════════════════════
+let D = defaultData();
+
+function lsLoad(){
+  try{
+    // Try to import from v2 if v3 doesn't exist
+    let raw = null;
+    const v3 = localStorage.getItem(DATA_KEY);
+    if(v3) raw = JSON.parse(v3);
+    else {
+      const v2 = localStorage.getItem('myday_v2');
+      if(v2){ raw = JSON.parse(v2); toast('이전 데이터를 불러왔어요 ✓'); }
+    }
+    D = migrate(raw);
+  } catch(e){ D = defaultData(); }
+}
+
+function lsSave(){
+  try{ localStorage.setItem(DATA_KEY, JSON.stringify(D)); } catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════════
+// SUPABASE SYNC — direct REST fetch (works with file:// + sb_publishable keys)
+// ═══════════════════════════════════════════════════════════
+let SB_URL = localStorage.getItem('myday_sb_url') || '';
+let SB_KEY = localStorage.getItem('myday_sb_key') || '';
+let syncOnline = false;
+let syncTimer = null;
+
+function sbHeaders(extra){
+  const h = {
+    'Content-Type': 'application/json',
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY
+  };
+  if(extra) Object.assign(h, extra);
+  return h;
+}
+
+async function sbFetch(method, path, body, extra){
+  const opts = { method, headers: sbHeaders(extra) };
+  if(body != null) opts.body = JSON.stringify(body);
+  const res = await fetch(SB_URL + '/rest/v1/' + path, opts);
+  const text = await res.text();
+  let json = null;
+  try{ json = text ? JSON.parse(text) : null; } catch(e){}
+  if(!res.ok){
+    const msg = (json && (json.message || json.error)) || ('HTTP ' + res.status);
+    const code = (json && json.code) || '';
+    const err = new Error(msg);
+    err.code = code; err.status = res.status;
+    throw err;
+  }
+  return json;
+}
+
+async function syncDown(){
+  if(!SB_URL || !SB_KEY) return;
+  try{
+    setSyncState('syncing');
+    const rows = await sbFetch('GET', 'myday_data?key=eq.main&select=value', null, {'Accept': 'application/json'});
+    if(rows && rows.length > 0){
+      const remote = migrate(rows[0].value);
+      D = mergeData(D, remote);
+      lsSave();
+    }
+    setSyncState('online');
+  } catch(e){ console.error('syncDown error:', e.message, e); setSyncState('offline'); }
+}
+
+async function syncUp(){
+  if(!SB_URL || !SB_KEY) return;
+  try{
+    setSyncState('syncing');
+    await sbFetch('POST', 'myday_data',
+      {key:'main', value:D, updated_at: new Date().toISOString()},
+      {'Prefer': 'resolution=merge-duplicates'}
+    );
+    setSyncState('online');
+  } catch(e){ console.error('syncUp error:', e.message, e); setSyncState('offline'); }
+}
+
+function mergeData(local, remote){
+  // Simple last-write-wins by comparing arrays, keep most items
+  const merged = {...remote};
+  // For dailyTodos and projects: merge by id
+  const mergeArr = (a, b) => {
+    const map = {};
+    [...(a||[]), ...(b||[])].forEach(x=>{ map[x.id] = x; });
+    return Object.values(map);
+  };
+  merged.dailyTodos = mergeArr(local.dailyTodos, remote.dailyTodos);
+  merged.projects = mergeArr(local.projects, remote.projects);
+  merged.events = mergeArr(local.events, remote.events);
+  // diaries: merge keys
+  merged.diaries = {...(local.diaries||{}), ...(remote.diaries||{})};
+  // stocks: remote wins
+  merged.stocks = remote.stocks && remote.stocks.length ? remote.stocks : (local.stocks||[]);
+  return merged;
+}
+
+function setSyncState(s){
+  syncOnline = s==='online';
+  const pills = [document.getElementById('syncPill'), document.getElementById('syncPillPC')];
+  const lbls = [document.getElementById('syncLbl'), document.getElementById('syncLblPC')];
+  const txt = s==='online'?'동기화됨':s==='syncing'?'동기화 중...':'오프라인';
+  pills.forEach(p=>{ if(p){ p.className='sync-pill '+s; } });
+  lbls.forEach(l=>{ if(l) l.textContent=txt; });
+}
+
+async function saveAndSync(){
+  lsSave();
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(syncUp, 800);
+}
+
+async function manualSync(){
+  await syncDown();
+  render();
+  toast('동기화 완료 ✓');
+}
+
+// ═══════════════════════════════════════════════════════════
+// SETUP
+// ═══════════════════════════════════════════════════════════
+async function connectSupabase(){
+  const url = document.getElementById('sbUrl').value.trim().replace(/\/$/,'');
+  const key = document.getElementById('sbKey').value.trim();
+  const errEl = document.getElementById('setupErr');
+  if(!url||!key){ errEl.textContent='URL과 Key를 모두 입력해 주세요.'; errEl.style.display='block'; return; }
+
+  errEl.textContent='연결 중...'; errEl.style.color='#f5a623'; errEl.style.display='block';
+
+  // temporarily set globals so sbFetch can use them
+  SB_URL = url; SB_KEY = key;
+
+  try{
+    const rows = await sbFetch('GET', 'myday_data?key=eq.main&select=key&limit=1', null, {'Accept':'application/json'});
+    console.log('connect ok, rows:', rows);
+    // success — save credentials
+    localStorage.setItem('myday_sb_url', url);
+    localStorage.setItem('myday_sb_key', key);
+    errEl.style.display='none';
+    document.getElementById('setupScreen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    await syncDown();
+    render();
+  } catch(e){
+    console.error('connectSupabase error:', e);
+    SB_URL=''; SB_KEY=''; // reset on fail
+    let msg = e.message || '연결 실패';
+    if(e.status === 401 || e.status === 403) msg = 'Key가 올바르지 않습니다. Publishable key를 다시 확인해 주세요.';
+    else if(e.status === 404 || (e.code && e.code==='42P01')) msg = '테이블이 없습니다. SQL Editor에서 테이블 생성 코드를 실행해 주세요.';
+    else if(!e.status) msg = '연결 실패 — URL을 확인해 주세요: ' + url;
+    errEl.textContent = msg;
+    errEl.style.color='#f96060';
+    errEl.style.display='block';
+  }
+}
+
+function skipSync(){
+  document.getElementById('setupScreen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// HEADER
+// ═══════════════════════════════════════════════════════════
+(function(){
+  document.getElementById('dateMain').textContent = `${today.getMonth()+1}월 ${today.getDate()}일`;
+  document.getElementById('dateSub').textContent = `${today.getFullYear()} · ${DAYSFULL[today.getDay()]}`;
+})();
+
+// ═══════════════════════════════════════════════════════════
+// TAB
+// ═══════════════════════════════════════════════════════════
+let curTab = 'today';
+function switchTab(name, btn, isNav=false){
+  curTab=name;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.pc-ni').forEach(t=>t.classList.remove('active'));
+  const tabNames=['today','daily','projects','schedule','diary','stocks'];
+  const idx=tabNames.indexOf(name);
+  if(isNav){
+    btn.classList.add('active');
+    if(idx>=0) document.querySelectorAll('.tab')[idx]?.classList.add('active');
+  } else {
+    btn.classList.add('active');
+    if(idx>=0){ document.querySelectorAll('.ni')[idx]?.classList.add('active'); document.querySelectorAll('.pc-ni')[idx]?.classList.add('active'); }
+  }
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════
+function render(){
+  const el = document.getElementById('content');
+  if(!el) return;
+  const tabs={today:renderToday,daily:renderDaily,projects:renderProjects,schedule:renderSchedule,diary:renderDiary,stocks:renderStocks};
+  el.innerHTML = (tabs[curTab]||renderToday)();
+  if(curTab==='stocks') initStockCharts();
+}
+
+// ─── TODAY ───────────────────────────────────────────────────────
+function renderToday(){
+  const todayEvs = D.events.filter(e=>e.date===todayStr).sort((a,b)=>a.start.localeCompare(b.start));
+  const pendingDaily = D.dailyTodos.filter(t=>!(t.doneDate||{})[todayStr]);
+  const doneDaily = D.dailyTodos.filter(t=>(t.doneDate||{})[todayStr]);
+  const urgentProj = D.projects.filter(p=>!p.done && p.due && daysLeft(p.due)<=3 && daysLeft(p.due)>=0);
+  const pct = D.dailyTodos.length ? Math.round(doneDaily.length/D.dailyTodos.length*100) : 0;
+
+  let h = `<div class="stats-row">
+    <div class="stat-box"><div class="stat-num">${todayEvs.length}</div><div class="stat-lbl">오늘 일정</div></div>
+    <div class="stat-box"><div class="stat-num">${doneDaily.length}/${D.dailyTodos.length}</div><div class="stat-lbl">매일 할일</div></div>
+    <div class="stat-box"><div class="stat-num">${urgentProj.length}</div><div class="stat-lbl">마감 임박</div></div>
+  </div>`;
+
+  if(D.dailyTodos.length){
+    h+=`<div class="day-prog-bar">
+      <div class="dpb-row"><span>오늘 완료율</span><span>${pct}%</span></div>
+      <div class="dpb-track"><div class="dpb-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }
+
+  h+=`<div class="sec-hd"><span class="sec-lbl">오늘 일정</span><button class="add-btn" onclick="openSchedModal()">+</button></div>`;
+  h+=todayEvs.length ? todayEvs.map(e=>evHTML(e)).join('') : `<div style="font-size:12px;color:var(--txt3);padding:8px 0">일정 없음</div>`;
+
+  h+=`<div class="sec-hd"><span class="sec-lbl">매일 할일 · 미완료 (${pendingDaily.length})</span><button class="add-btn" onclick="openDailyModal()">+</button></div>`;
+  if(pendingDaily.length) h+=pendingDaily.map(t=>dailyHTML(t)).join('');
+  else if(D.dailyTodos.length) h+=`<div style="font-size:12px;color:var(--green);padding:8px 0">🎉 오늘 매일 할일 모두 완료!</div>`;
+  else h+=`<div style="font-size:12px;color:var(--txt3);padding:8px 0">매일 할일을 추가해 보세요</div>`;
+
+  if(urgentProj.length){
+    h+=`<div class="sec-hd"><span class="sec-lbl">⚠️ 마감 임박</span></div>`;
+    h+=urgentProj.map(p=>projHTML(p)).join('');
+  }
+  return h;
+}
+
+// ─── DAILY ───────────────────────────────────────────────────────
+function renderDaily(){
+  const done = D.dailyTodos.filter(t=>(t.doneDate||{})[todayStr]);
+  const pending = D.dailyTodos.filter(t=>!(t.doneDate||{})[todayStr]);
+  const pct = D.dailyTodos.length ? Math.round(done.length/D.dailyTodos.length*100) : 0;
+
+  let h = '';
+  if(D.dailyTodos.length){
+    h+=`<div class="day-prog-bar" style="margin-top:14px">
+      <div class="dpb-row"><span>오늘 완료율</span><span>${done.length} / ${D.dailyTodos.length} · ${pct}%</span></div>
+      <div class="dpb-track"><div class="dpb-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }
+  h+=`<div class="sec-hd"><span class="sec-lbl">미완료 (${pending.length})</span><button class="add-btn" onclick="openDailyModal()">+</button></div>`;
+  h+=pending.length ? pending.map(t=>dailyHTML(t)).join('') : `<div class="empty"><div class="empty-icon">✅</div>모두 완료!</div>`;
+  if(done.length){
+    h+=`<div class="sec-hd"><span class="sec-lbl">완료 (${done.length})</span></div>`;
+    h+=done.map(t=>dailyHTML(t)).join('');
+  }
+  return h;
+}
+
+function dailyHTML(t){
+  const isDone = !!(t.doneDate||{})[todayStr];
+  const doneAt = isDone && t.doneTimes && t.doneTimes[todayStr];
+  return `<div class="todo-row ${isDone?'done-row':''}" onclick="toggleDaily(${t.id})">
+    <div class="check ${isDone?'on':''}"></div>
+    <div class="todo-body">
+      <div class="todo-title">${t.title}</div>
+      <div class="todo-meta">
+        <span class="badge ${PRI_CLS[t.priority]||'b-amb'}">${t.priority}</span>
+        ${t.category?`<span class="badge b-acc">${t.category}</span>`:''}
+        <span class="badge b-blue">매일 반복</span>
+        ${doneAt?`<span class="done-date">✓ ${doneAt}</span>`:''}
+      </div>
+    </div>
+    <button class="del-btn" onclick="event.stopPropagation();deleteDaily(${t.id})">×</button>
+  </div>`;
+}
+
+function toggleDaily(id){
+  const t=D.dailyTodos.find(x=>x.id===id); if(!t) return;
+  if(!t.doneDate) t.doneDate={};
+  if(!t.doneTimes) t.doneTimes={};
+  if(t.doneDate[todayStr]){
+    delete t.doneDate[todayStr]; delete t.doneTimes[todayStr];
+  } else {
+    t.doneDate[todayStr]=true;
+    t.doneTimes[todayStr]=nowTimeStr();
+  }
+  saveAndSync(); render();
+}
+
+function deleteDaily(id){ D.dailyTodos=D.dailyTodos.filter(t=>t.id!==id); saveAndSync(); render(); }
+
+// ─── PROJECTS ────────────────────────────────────────────────────
+function renderProjects(){
+  const active=D.projects.filter(p=>!p.done);
+  const done=D.projects.filter(p=>p.done);
+  let h=`<div class="sec-hd" style="margin-top:14px"><span class="sec-lbl">진행 중 (${active.length})</span><button class="add-btn" onclick="openProjModal()">+</button></div>`;
+  h+=active.length?active.map(projHTML).join(''):`<div class="empty"><div class="empty-icon">🎯</div>장기 목표를 추가해 보세요<br><span style="font-size:11px">세부 할일로 나눠 진행률을 관리해요</span></div>`;
+  if(done.length){
+    h+=`<div class="sec-hd"><span class="sec-lbl">완료된 목표 (${done.length})</span></div>`;
+    h+=done.map(projHTML).join('');
+  }
+  return h;
+}
+
+function projHTML(p){
+  const pct=projPct(p);
+  const dl=p.due?daysLeft(p.due):null;
+  const dueClass=p.done?'done-lbl':dl===null?'':(dl<0?'overdue':dl<=3?'near':'');
+  const dueText=p.done?`✓ ${p.doneDate||'완료'}`:(dl===null?'기한 없음':(dl<0?`${Math.abs(dl)}일 초과`:(dl===0?'오늘 마감':`D-${dl}`)));
+  const fillClass=p.done?'':dl!==null&&dl<0?'danger':dl!==null&&dl<=3?'warn':'';
+  const subs=p.subtasks||[];
+  const doneSubs=subs.filter(s=>s.done).length;
+
+  return `<div class="proj-card">
+    <div class="proj-hd" onclick="toggleProjOpen(${p.id})">
+      <span class="proj-title" style="${p.done?'text-decoration:line-through;color:var(--txt3)':''}">${p.title}</span>
+      <span class="proj-due ${dueClass}">${dueText}</span>
+    </div>
+    ${p.note?`<div style="font-size:11px;color:var(--txt2);margin-top:6px">${p.note}</div>`:''}
+    <div class="prog-wrap">
+      <div class="prog-info"><span>${doneSubs}/${subs.length} 세부 완료</span><span>${pct}%</span></div>
+      <div class="prog-track"><div class="prog-fill ${fillClass}" style="width:${pct}%"></div></div>
+    </div>
+    <div style="margin-top:6px;display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+      ${p.category?`<span class="badge b-acc">${p.category}</span>`:''}
+      <span class="badge ${pct>=100?'b-grn':'b-blue'}">${pct>=100?'완료':'진행중'}</span>
+      <span style="font-size:10px;color:var(--txt3);margin-left:auto">${p._open?'▲':'▼'} 세부 할일</span>
+    </div>
+    <div class="sub-list ${p._open?'open':''}" id="subs-${p.id}">
+      ${subs.map(s=>`
+        <div class="sub-item" onclick="toggleSub(${p.id},${s.id})">
+          <div class="ck-sm ${s.done?'on':''}"></div>
+          <span class="sub-txt ${s.done?'done':''}">${s.title}</span>
+          ${s.done&&s.doneAt?`<span class="sub-done-date">${s.doneAt}</span>`:''}
+          <button class="del-btn" style="font-size:13px" onclick="event.stopPropagation();deleteSub(${p.id},${s.id})">×</button>
+        </div>`).join('')}
+      <div style="display:flex;align-items:center;gap:6px;padding:8px 0 2px;cursor:pointer;color:var(--txt3);font-size:12px" onclick="openSubModal(${p.id})">＋ 세부 할일 추가</div>
+      <div class="proj-btns">
+        <div class="pj-btn" onclick="editProj(${p.id})">수정</div>
+        <div class="pj-btn ok" onclick="toggleProjDone(${p.id})">${p.done?'재시작':'목표 완료'}</div>
+        <div class="pj-btn danger" onclick="deleteProj(${p.id})">삭제</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function projPct(p){
+  const s=p.subtasks||[];
+  if(!s.length) return p.done?100:0;
+  return Math.round(s.filter(x=>x.done).length/s.length*100);
+}
+function toggleProjOpen(id){ const p=D.projects.find(x=>x.id===id); if(p) p._open=!p._open; render(); }
+function toggleProjDone(id){
+  const p=D.projects.find(x=>x.id===id); if(!p) return;
+  p.done=!p.done;
+  p.doneDate=p.done?todayStr:null;
+  p._open=false;
+  saveAndSync(); render();
+}
+function deleteProj(id){ D.projects=D.projects.filter(p=>p.id!==id); saveAndSync(); render(); }
+function editProj(id){ openProjModal(D.projects.find(p=>p.id===id)); }
+function toggleSub(pid,sid){
+  const p=D.projects.find(x=>x.id===pid); if(!p) return;
+  const s=(p.subtasks||[]).find(x=>x.id===sid); if(!s) return;
+  s.done=!s.done;
+  s.doneAt=s.done?nowTimeStr():null;
+  saveAndSync(); render();
+}
+function deleteSub(pid,sid){
+  const p=D.projects.find(x=>x.id===pid); if(!p) return;
+  p.subtasks=(p.subtasks||[]).filter(x=>x.id!==sid);
+  saveAndSync(); render();
+}
+
+// ─── SCHEDULE ────────────────────────────────────────────────────
+function renderSchedule(){
+  const sorted=[...D.events].sort((a,b)=>a.date===b.date?a.start.localeCompare(b.start):a.date.localeCompare(b.date));
+  const upcoming=sorted.filter(e=>e.date>=todayStr);
+  const past=sorted.filter(e=>e.date<todayStr).reverse();
+  let h=`<div class="sec-hd" style="margin-top:14px"><span class="sec-lbl">예정 (${upcoming.length})</span><button class="add-btn" onclick="openSchedModal()">+</button></div>`;
+  if(upcoming.length){ let ld=''; h+=upcoming.map(e=>{ let ds=''; if(e.date!==ld){ld=e.date;const d=new Date(e.date+'T00:00:00');ds=`<div class="date-sep">${e.date===todayStr?'오늘':e.date===tmrw()?'내일':`${d.getMonth()+1}/${d.getDate()} (${DAYS[d.getDay()]})`}</div>`;} return ds+evHTML(e); }).join(''); }
+  else h+=`<div class="empty"><div class="empty-icon">📅</div>예정 일정 없음</div>`;
+  if(past.length){
+    h+=`<div class="sec-hd"><span class="sec-lbl">지난 일정</span></div>`;
+    let ld=''; h+=past.map(e=>{ let ds=''; if(e.date!==ld){ld=e.date;const d=new Date(e.date+'T00:00:00');ds=`<div class="date-sep">${d.getMonth()+1}/${d.getDate()} (${DAYS[d.getDay()]})</div>`;} return ds+evHTML(e,true); }).join('');
+  }
+  return h;
+}
+
+function evHTML(e, past=false){
+  const col=CAT_COL[e.cat]||'acc';
+  return `<div class="ev-item ${past?'ev-past':''}">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--${col});border-radius:3px 0 0 3px"></div>
+    <div class="ev-tc">${e.start}<br>${e.end}</div>
+    <div class="ev-info">
+      <div class="ev-title">${e.title}</div>
+      ${e.note?`<div class="ev-note">${e.note}</div>`:''}
+      <div style="margin-top:4px"><span class="badge b-acc">${e.cat}</span></div>
+    </div>
+    <button class="del-btn" onclick="deleteEvent(${e.id})">×</button>
+  </div>`;
+}
+function deleteEvent(id){ D.events=D.events.filter(e=>e.id!==id); saveAndSync(); render(); }
+function tmrw(){ const d=new Date(today); d.setDate(d.getDate()+1); return d.toISOString().split('T')[0]; }
+
+// ─── DIARY ───────────────────────────────────────────────────────
+function renderDiary(){
+  const saved=D.diaries[todayStr]||{};
+  const entries=Object.entries(D.diaries).sort((a,b)=>b[0].localeCompare(a[0]));
+  let h=`<div style="margin-top:14px">
+    <div class="sec-lbl" style="margin-bottom:8px">오늘의 기분</div>
+    <div class="mood-strip">${moods.map(m=>`<button class="mood-pill ${saved.mood===m?'on':''}" onclick="selectMood('${m}')">${m}</button>`).join('')}</div>
+    <div class="sec-lbl" style="margin-bottom:7px">오늘의 기록</div>
+    <textarea class="diary-ta" id="diaryTA" placeholder="오늘 있었던 일, 생각, 느낀 점을 자유롭게...">${saved.text||''}</textarea>
+    <button class="save-btn" onclick="saveDiary()">저장</button>
+  </div>`;
+  if(entries.length){
+    h+=`<div class="sec-hd" style="margin-top:20px"><span class="sec-lbl">지난 기록 (${entries.length})</span></div>`;
+    h+=entries.map(([date,d])=>{
+      const dd=new Date(date+'T00:00:00');
+      const lbl=date===todayStr?'오늘':`${dd.getFullYear()}.${dd.getMonth()+1}.${dd.getDate()} (${DAYS[dd.getDay()]})`;
+      return `<div class="diary-entry">
+        <div class="de-hd">
+          <span class="de-date">${lbl}</span>
+          <div style="display:flex;align-items:center;gap:8px">${d.mood?`<span style="font-size:17px">${d.mood}</span>`:''}<button class="del-btn" onclick="deleteDiary('${date}')">×</button></div>
+        </div>
+        <div class="de-body">${d.text}</div>
+      </div>`;
+    }).join('');
+  }
+  return h;
+}
+
+function selectMood(m){
+  if(!D.diaries[todayStr]) D.diaries[todayStr]={};
+  D.diaries[todayStr].mood=D.diaries[todayStr].mood===m?'':m;
+  saveAndSync();
+  const ta=document.getElementById('diaryTA');
+  const v=ta?ta.value:'';
+  render();
+  setTimeout(()=>{ const t=document.getElementById('diaryTA'); if(t) t.value=v; },0);
+}
+function saveDiary(){
+  const text=(document.getElementById('diaryTA')||{}).value||'';
+  if(!D.diaries[todayStr]) D.diaries[todayStr]={};
+  D.diaries[todayStr].text=text; D.diaries[todayStr].ts=new Date().toISOString();
+  saveAndSync(); render(); toast('기록 저장됨 ✓');
+}
+function deleteDiary(date){ delete D.diaries[date]; saveAndSync(); render(); }
+
+// ─── STOCKS ──────────────────────────────────────────────────────
+function renderStocks(){
+  let h=`<div style="margin-top:14px">
+    <div class="stock-add-row">
+      <input class="stock-input" id="stockInput" placeholder="티커 입력 (예: AAPL, TSLA, 005930.KS)" maxlength="20"
+        onkeydown="if(event.key==='Enter')addStock()">
+      <button class="stock-add-go" onclick="addStock()">추가</button>
+    </div>
+    <div id="stocksGrid" class="${window.innerWidth>=768?'stocks-grid':''}">`;
+  if(!D.stocks.length){
+    h+=`<div class="empty"><div class="empty-icon">📈</div>관심 주식 티커를 추가해 보세요<br><span style="font-size:11px">예: AAPL · TSLA · MSFT · 005930.KS (삼성)</span></div>`;
+  } else {
+    h+=D.stocks.map(s=>`
+      <div class="stock-card" id="sc-${s.ticker}">
+        <div class="stock-hd">
+          <div><div class="stock-ticker">${s.ticker}</div><div class="stock-name" id="sn-${s.ticker}">${s.name||''}</div></div>
+          <div class="stock-price"><div class="stock-val flat" id="sv-${s.ticker}">--</div><div class="stock-chg flat" id="sc2-${s.ticker}">--</div></div>
+        </div>
+        <canvas class="stock-chart" id="chart-${s.ticker}" height="72"></canvas>
+        <div class="chart-range">
+          ${['1d','5d','1mo','3mo','1y'].map(r=>`<button class="cr-btn ${(s.range||'1mo')===r?'on':''}" onclick="setRange('${s.ticker}','${r}')">${r}</button>`).join('')}
+        </div>
+        <div class="stock-footer">
+          <span class="stock-meta" id="sm-${s.ticker}"></span>
+          <button class="stock-del" onclick="deleteStock('${s.ticker}')">× 삭제</button>
+        </div>
+      </div>`).join('');
+  }
+  h+='</div></div>';
+  return h;
+}
+
+function addStock(){
+  const inp=document.getElementById('stockInput');
+  if(!inp) return;
+  const ticker=inp.value.trim().toUpperCase();
+  if(!ticker) return;
+  if(D.stocks.find(s=>s.ticker===ticker)){ toast('이미 추가된 티커예요'); return; }
+  D.stocks.push({ticker, name:'', range:'1mo'});
+  saveAndSync(); render();
+}
+
+function deleteStock(ticker){
+  D.stocks=D.stocks.filter(s=>s.ticker!==ticker);
+  saveAndSync(); render();
+}
+
+function setRange(ticker, range){
+  const s=D.stocks.find(x=>x.ticker===ticker);
+  if(s){ s.range=range; saveAndSync(); }
+  loadStockChart(ticker, range);
+  // update buttons
+  document.querySelectorAll(`#sc-${ticker} .cr-btn`).forEach(b=>{
+    b.classList.toggle('on', b.textContent===range);
+  });
+}
+
+function initStockCharts(){
+  D.stocks.forEach(s=>loadStockChart(s.ticker, s.range||'1mo'));
+}
+
+async function loadStockChart(ticker, range){
+  const canvas=document.getElementById('chart-'+ticker);
+  const valEl=document.getElementById('sv-'+ticker);
+  const chgEl=document.getElementById('sc2-'+ticker);
+  const nameEl=document.getElementById('sn-'+ticker);
+  const metaEl=document.getElementById('sm-'+ticker);
+  if(!canvas) return;
+
+  // Use Yahoo Finance via allorigins proxy
+  const interval = range==='1d'?'5m':range==='5d'?'30m':range==='1mo'?'1d':range==='3mo'?'1d':'1wk';
+  const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=${range}&interval=${interval}`;
+  const proxy=`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+
+  try{
+    const res=await fetch(proxy);
+    const json=await res.json();
+    const data=JSON.parse(json.contents);
+    const result=data?.chart?.result?.[0];
+    if(!result) throw new Error('no data');
+
+    const meta=result.meta;
+    const closes=result.indicators?.quote?.[0]?.close||[];
+    const timestamps=result.timestamp||[];
+    const validPts=closes.map((c,i)=>({c,t:timestamps[i]})).filter(p=>p.c!=null);
+
+    if(!validPts.length) throw new Error('empty');
+
+    const price=meta.regularMarketPrice||validPts[validPts.length-1].c;
+    const prev=meta.chartPreviousClose||validPts[0].c;
+    const change=price-prev;
+    const changePct=(change/prev*100);
+    const dir=change>0?'up':change<0?'dn':'flat';
+
+    if(nameEl) nameEl.textContent=meta.shortName||meta.symbol||'';
+    if(valEl){ valEl.textContent=price.toFixed(price>100?2:3); valEl.className='stock-val '+dir; }
+    if(chgEl){ chgEl.textContent=`${change>=0?'+':''}${change.toFixed(2)} (${changePct>=0?'+':''}${changePct.toFixed(2)}%)`; chgEl.className='stock-chg '+dir; }
+    if(metaEl) metaEl.textContent=meta.currency||'';
+
+    drawChart(canvas, validPts.map(p=>p.c), dir);
+  } catch(e){
+    if(valEl){ valEl.textContent='오류'; valEl.className='stock-val flat'; }
+    if(chgEl){ chgEl.textContent='데이터 없음'; chgEl.className='stock-chg flat'; }
+  }
+}
+
+function drawChart(canvas, prices, dir){
+  const ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth||280, H=72;
+  canvas.width=W*2; canvas.height=H*2; ctx.scale(2,2);
+
+  const min=Math.min(...prices), max=Math.max(...prices);
+  const range=max-min||1;
+  const pad={t:6,b:6,l:4,r:4};
+  const w=W-pad.l-pad.r, h=H-pad.t-pad.b;
+
+  const x=i=>(i/(prices.length-1))*w+pad.l;
+  const y=v=>h-(v-min)/range*h+pad.t;
+
+  const color=dir==='up'?'#2dd4a0':dir==='dn'?'#f96060':'#8888a8';
+
+  ctx.clearRect(0,0,W,H);
+
+  // Gradient fill
+  const grad=ctx.createLinearGradient(0,pad.t,0,H);
+  grad.addColorStop(0, color+'55'); grad.addColorStop(1, color+'00');
+  ctx.beginPath();
+  ctx.moveTo(x(0),y(prices[0]));
+  prices.forEach((p,i)=>{ if(i>0) ctx.lineTo(x(i),y(p)); });
+  ctx.lineTo(x(prices.length-1), H-pad.b);
+  ctx.lineTo(x(0), H-pad.b);
+  ctx.closePath();
+  ctx.fillStyle=grad; ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.moveTo(x(0),y(prices[0]));
+  prices.forEach((p,i)=>{ if(i>0) ctx.lineTo(x(i),y(p)); });
+  ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.lineJoin='round'; ctx.stroke();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════════════════
+function openModal(html){
+  document.getElementById('sheetContent').innerHTML=html;
+  document.getElementById('overlay').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('overlay').classList.remove('open');
+}
+document.getElementById('overlay').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+
+function openDailyModal(){
+  openModal(`<div class="sheet-title">매일 할일 추가</div>
+    <div class="field"><label>내용</label><input id="m-t" placeholder="매일 반복할 할일" autofocus></div>
+    <div class="row2">
+      <div class="field"><label>우선순위</label><select id="m-p"><option>높음</option><option selected>보통</option><option>낮음</option></select></div>
+      <div class="field"><label>카테고리</label><select id="m-c"><option value="">없음</option><option>업무</option><option>개인</option><option>건강</option><option>학습</option></select></div>
+    </div>
+    <div class="modal-btns"><button class="m-cancel" onclick="closeModal()">취소</button><button class="m-ok" onclick="addDaily()">추가</button></div>`);
+}
+function addDaily(){
+  const t=(document.getElementById('m-t')||{}).value?.trim(); if(!t) return;
+  D.dailyTodos.push({id:Date.now(),title:t,priority:document.getElementById('m-p').value,category:document.getElementById('m-c').value,doneDate:{},doneTimes:{}});
+  saveAndSync(); closeModal(); render();
+}
+
+function openProjModal(proj=null){
+  const e=proj||{};
+  openModal(`<div class="sheet-title">${proj?'목표 수정':'장기 목표 추가'}</div>
+    <div class="field"><label>목표 제목</label><input id="p-t" value="${e.title||''}" placeholder="예: 영어 공부, 운동 루틴" autofocus></div>
+    <div class="field"><label>메모 (선택)</label><textarea id="p-n">${e.note||''}</textarea></div>
+    <div class="row2">
+      <div class="field"><label>마감일</label><input id="p-d" type="date" value="${e.due||''}"></div>
+      <div class="field"><label>카테고리</label><select id="p-c"><option value="">없음</option><option ${e.category==='업무'?'selected':''}>업무</option><option ${e.category==='개인'?'selected':''}>개인</option><option ${e.category==='건강'?'selected':''}>건강</option><option ${e.category==='학습'?'selected':''}>학습</option></select></div>
+    </div>
+    <div class="modal-btns"><button class="m-cancel" onclick="closeModal()">취소</button><button class="m-ok" onclick="${proj?`saveProj(${proj.id})`:'addProj()'}">${proj?'저장':'추가'}</button></div>`);
+}
+function addProj(){
+  const t=(document.getElementById('p-t')||{}).value?.trim(); if(!t) return;
+  D.projects.push({id:Date.now(),title:t,note:document.getElementById('p-n').value,due:document.getElementById('p-d').value,category:document.getElementById('p-c').value,subtasks:[],done:false,_open:true});
+  saveAndSync(); closeModal(); render();
+}
+function saveProj(id){
+  const p=D.projects.find(x=>x.id===id); if(!p) return;
+  const t=(document.getElementById('p-t')||{}).value?.trim(); if(!t) return;
+  p.title=t; p.note=document.getElementById('p-n').value; p.due=document.getElementById('p-d').value; p.category=document.getElementById('p-c').value;
+  saveAndSync(); closeModal(); render();
+}
+
+function openSubModal(pid){
+  openModal(`<div class="sheet-title">세부 할일 추가</div>
+    <div class="field"><label>내용</label><input id="s-t" placeholder="예: 단어 50개 외우기" autofocus></div>
+    <div class="modal-btns"><button class="m-cancel" onclick="closeModal()">취소</button><button class="m-ok" onclick="addSub(${pid})">추가</button></div>`);
+}
+function addSub(pid){
+  const p=D.projects.find(x=>x.id===pid); if(!p) return;
+  const t=(document.getElementById('s-t')||{}).value?.trim(); if(!t) return;
+  if(!p.subtasks) p.subtasks=[];
+  p.subtasks.push({id:Date.now(),title:t,done:false,doneAt:null});
+  saveAndSync(); closeModal(); render();
+}
+
+function openSchedModal(){
+  openModal(`<div class="sheet-title">일정 추가</div>
+    <div class="field"><label>제목</label><input id="e-t" placeholder="일정 이름" autofocus></div>
+    <div class="field"><label>날짜</label><input id="e-d" type="date" value="${todayStr}"></div>
+    <div class="row2">
+      <div class="field"><label>시작</label><input id="e-s" type="time" value="09:00"></div>
+      <div class="field"><label>종료</label><input id="e-e" type="time" value="10:00"></div>
+    </div>
+    <div class="field"><label>카테고리</label><select id="e-c"><option>업무</option><option>개인</option><option>약속</option><option>건강</option><option>학습</option></select></div>
+    <div class="field"><label>메모 (선택)</label><input id="e-n" placeholder="추가 메모"></div>
+    <div class="modal-btns"><button class="m-cancel" onclick="closeModal()">취소</button><button class="m-ok" onclick="addEvent()">추가</button></div>`);
+}
+function addEvent(){
+  const t=(document.getElementById('e-t')||{}).value?.trim(); if(!t) return;
+  D.events.push({id:Date.now(),title:t,date:document.getElementById('e-d').value,start:document.getElementById('e-s').value,end:document.getElementById('e-e').value,cat:document.getElementById('e-c').value,note:document.getElementById('e-n').value});
+  saveAndSync(); closeModal(); render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════
+function daysLeft(dateStr){ const d=new Date(dateStr+'T00:00:00'); return Math.round((d-new Date(todayStr+'T00:00:00'))/86400000); }
+function nowTimeStr(){ return new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+lsLoad();
+
+if(SB_URL && SB_KEY){
+  document.getElementById('setupScreen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  syncDown().then(()=>render());
+} else if(localStorage.getItem('myday_skip_setup')){
+  document.getElementById('setupScreen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  render();
+} else {
+  document.getElementById('setupScreen').style.display='flex';
+}
+
+function skipSync(){
+  localStorage.setItem('myday_skip_setup','1');
+  document.getElementById('setupScreen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  render();
+}
+
+// Auto-sync every 60 seconds
+setInterval(()=>{ if(SB_URL&&SB_KEY) syncDown().then(()=>render()); }, 60000);
+</script>
+</body>
+</html>
