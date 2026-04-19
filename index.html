@@ -85,7 +85,7 @@ html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Noto Sa
 #content::-webkit-scrollbar{display:none}
 
 /* ── BOTTOM NAV ── */
-#bnav{position:absolute;bottom:0;left:0;right:0;background:rgba(10,10,16,0.92);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(20px);z-index:40}
+#bnav{position:absolute;bottom:0;left:0;right:0;background:rgba(10,10,16,0.92);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(8,1fr);padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(20px);z-index:40}
 .ni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0;border:none;background:none;cursor:pointer;color:var(--txt3);font-size:10px;font-family:'Noto Sans KR',sans-serif;transition:color 0.15s}
 .ni.active{color:var(--acc2)}
 .ni-icon{font-size:20px;line-height:1}
@@ -250,6 +250,55 @@ html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Noto Sa
 @media(max-width:767px){
   #sidebar{display:none}
 }
+
+/* ── CALENDAR ── */
+.cal-wrap{padding:4px 0}
+.cal-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-nav-btn{background:var(--bg3);border:1px solid var(--line2);border-radius:var(--rsm);color:var(--txt2);font-size:18px;width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cal-nav-btn:active{background:var(--acc);color:#fff}
+.cal-month-lbl{font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--txt)}
+.cal-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}
+.cal-day-lbl{text-align:center;font-size:10px;font-family:'DM Mono',monospace;color:var(--txt3);padding:4px 0;font-weight:500}
+.cal-day-lbl:first-child{color:var(--red)}
+.cal-day-lbl:last-child{color:var(--blue)}
+.cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:var(--rsm);cursor:pointer;position:relative;transition:all 0.15s;gap:2px}
+.cal-cell:active{opacity:0.7}
+.cal-cell.other{opacity:0.2}
+.cal-cell.today-cell .cal-num{background:var(--acc);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.cal-cell.selected-cell .cal-num{background:var(--acc)33;color:var(--acc2);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border:1px solid var(--acc)}
+.cal-num{font-size:13px;font-weight:500;line-height:1;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.cal-cell.sunday .cal-num{color:var(--red)}
+.cal-cell.saturday .cal-num{color:var(--blue)}
+.cal-cell.today-cell .cal-num,.cal-cell.selected-cell .cal-num{color:unset}
+.cal-dots{display:flex;gap:2px;justify-content:center;min-height:5px}
+.cal-dot{width:4px;height:4px;border-radius:50%}
+.cal-dot.ev{background:var(--acc)}
+.cal-dot.todo{background:var(--green)}
+.cal-dot.diary{background:var(--pink)}
+.cal-detail{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:12px}
+.cal-detail-date{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;color:var(--txt2);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.cal-detail-empty{font-size:12px;color:var(--txt3);text-align:center;padding:12px 0}
+
+/* ── INVEST ── */
+.inv-tabs{display:flex;gap:4px;background:var(--bg3);border-radius:var(--r);padding:3px;margin-bottom:14px}
+.inv-tab{flex:1;padding:7px;border-radius:var(--rsm);font-size:12px;cursor:pointer;border:none;background:none;color:var(--txt2);font-family:'Noto Sans KR',sans-serif;text-align:center;transition:all 0.15s}
+.inv-tab.active{background:var(--bg);color:var(--txt);font-weight:500;box-shadow:0 0 0 0.5px var(--line2)}
+.principle-ta{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px;color:var(--txt);font-size:13px;line-height:1.8;resize:none;min-height:300px;font-family:'Noto Sans KR',sans-serif;outline:none}
+.principle-ta:focus{border-color:var(--acc)}
+.principle-view{font-size:13px;line-height:1.9;color:var(--txt);white-space:pre-wrap;padding:4px 0}
+.fin-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:8px}
+.fin-ticker{font-size:15px;font-weight:700;font-family:'DM Mono',monospace}
+.fin-name{font-size:11px;color:var(--txt2);margin-top:1px}
+.fin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.fin-item{background:var(--bg3);border-radius:var(--rsm);padding:8px 10px}
+.fin-lbl{font-size:10px;color:var(--txt3);font-family:'DM Mono',monospace;letter-spacing:0.05em;margin-bottom:3px}
+.fin-val{font-size:14px;font-weight:500;font-family:'DM Mono',monospace;color:var(--txt)}
+.fin-val.loading{color:var(--txt3);font-size:12px}
+.report-item{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:13px;margin-bottom:8px}
+.report-title{font-size:13px;font-weight:500;margin-bottom:4px}
+.report-meta{font-size:11px;color:var(--txt2);font-family:'DM Mono',monospace;margin-bottom:6px}
+.report-memo{font-size:12px;color:var(--txt2);line-height:1.6;white-space:pre-wrap}
+.report-link{font-size:11px;color:var(--acc2);text-decoration:none;display:inline-block;margin-top:4px}
 </style>
 </head>
 <body>
@@ -308,6 +357,8 @@ create policy "public rw" on myday_data
       <button class="pc-ni" onclick="switchTab('schedule',this,true)"><span class="pc-ni-icon">📅</span>스케줄</button>
       <button class="pc-ni" onclick="switchTab('diary',this,true)"><span class="pc-ni-icon">📔</span>기록</button>
       <button class="pc-ni" onclick="switchTab('stocks',this,true)"><span class="pc-ni-icon">📈</span>주식</button>
+      <button class="pc-ni" onclick="switchTab('calendar',this,true)"><span class="pc-ni-icon">📆</span>달력</button>
+      <button class="pc-ni" onclick="switchTab('invest',this,true)"><span class="pc-ni-icon">💼</span>투자일지</button>
     </div>
     <div class="pc-sync">
       <div class="sync-pill" id="syncPillPC" onclick="manualSync()">
@@ -338,6 +389,8 @@ create policy "public rw" on myday_data
       <button class="tab" onclick="switchTab('schedule',this)">스케줄</button>
       <button class="tab" onclick="switchTab('diary',this)">기록</button>
       <button class="tab" onclick="switchTab('stocks',this)">주식 📈</button>
+      <button class="tab" onclick="switchTab('calendar',this)">📆 달력</button>
+      <button class="tab" onclick="switchTab('invest',this)">💼 투자일지</button>
     </div>
 
     <div id="content"></div>
@@ -351,6 +404,8 @@ create policy "public rw" on myday_data
     <button class="ni" onclick="switchTab('schedule',this,true)"><span class="ni-icon">📅</span>일정</button>
     <button class="ni" onclick="switchTab('diary',this,true)"><span class="ni-icon">📔</span>기록</button>
     <button class="ni" onclick="switchTab('stocks',this,true)"><span class="ni-icon">📈</span>주식</button>
+    <button class="ni" onclick="switchTab('calendar',this,true)"><span class="ni-icon">📆</span>달력</button>
+    <button class="ni" onclick="switchTab('invest',this,true)"><span class="ni-icon">💼</span>투자</button>
   </nav>
 </div>
 
@@ -368,8 +423,8 @@ create policy "public rw" on myday_data
 // ═══════════════════════════════════════════════════════════
 // CONFIG & VERSION
 // ═══════════════════════════════════════════════════════════
-const APP_VERSION = 3;
-const DATA_KEY = 'myday_v3';
+const APP_VERSION = 4;
+const DATA_KEY = 'myday_v4';
 
 const DAYS = ['일','월','화','수','목','금','토'];
 const DAYSFULL = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
@@ -391,6 +446,9 @@ function defaultData(){
     events: [],
     diaries: {},
     stocks: [],        // {ticker, name, range:'1mo'}
+    investPrinciples: '',  // 투자 원칙 텍스트
+    watchlist: [],         // {ticker, memo, addedAt}
+    investNotes: [],       // {id, title, url, memo, date}
   };
 }
 
@@ -400,6 +458,12 @@ function migrate(raw){
   if(!raw.dailyTodos) raw.dailyTodos = raw.todos ? raw.todos.filter(t=>t.repeat) : [];
   // v2→v3: stocks 추가
   if(!raw.stocks) raw.stocks = [];
+  // v3→v4: invest journal + recurring events
+  if(!raw.investPrinciples) raw.investPrinciples='';
+  if(!raw.watchlist) raw.watchlist=[];
+  if(!raw.investNotes) raw.investNotes=[];
+  // add repeat field to existing events
+  (raw.events||[]).forEach(e=>{ if(!e.repeat) e.repeat=''; });
   // ensure all fields
   const def = defaultData();
   Object.keys(def).forEach(k=>{ if(raw[k]===undefined) raw[k]=def[k]; });
@@ -587,7 +651,7 @@ function switchTab(name, btn, isNav=false){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.pc-ni').forEach(t=>t.classList.remove('active'));
-  const tabNames=['today','daily','projects','schedule','diary','stocks'];
+  const tabNames=['today','daily','projects','schedule','diary','stocks','calendar','invest'];
   const idx=tabNames.indexOf(name);
   if(isNav){
     btn.classList.add('active');
@@ -605,14 +669,15 @@ function switchTab(name, btn, isNav=false){
 function render(){
   const el = document.getElementById('content');
   if(!el) return;
-  const tabs={today:renderToday,daily:renderDaily,projects:renderProjects,schedule:renderSchedule,diary:renderDiary,stocks:renderStocks};
+  const tabs={today:renderToday,daily:renderDaily,projects:renderProjects,schedule:renderSchedule,diary:renderDiary,stocks:renderStocks,calendar:renderCalendar,invest:renderInvest};
   el.innerHTML = (tabs[curTab]||renderToday)();
   if(curTab==='stocks') initStockCharts();
+  if(curTab==='invest' && investTab==='watchlist') setTimeout(initWatchlistData, 100);
 }
 
 // ─── TODAY ───────────────────────────────────────────────────────
 function renderToday(){
-  const todayEvs = D.events.filter(e=>e.date===todayStr).sort((a,b)=>a.start.localeCompare(b.start));
+  const todayEvs = getEventsForDate(todayStr).sort((a,b)=>a.start.localeCompare(b.start));
   const pendingDaily = D.dailyTodos.filter(t=>!(t.doneDate||{})[todayStr]);
   const doneDaily = D.dailyTodos.filter(t=>(t.doneDate||{})[todayStr]);
   const urgentProj = D.projects.filter(p=>!p.done && p.due && daysLeft(p.due)<=3 && daysLeft(p.due)>=0);
@@ -679,6 +744,7 @@ function dailyHTML(t){
         <span class="badge ${PRI_CLS[t.priority]||'b-amb'}">${t.priority}</span>
         ${t.category?`<span class="badge b-acc">${t.category}</span>`:''}
         <span class="badge b-blue">매일 반복</span>
+        ${isDone?`<span class="badge" style="background:var(--redl);color:var(--red);cursor:pointer">취소</span>`:''}
         ${doneAt?`<span class="done-date">✓ ${doneAt}</span>`:''}
       </div>
     </div>
@@ -784,30 +850,60 @@ function deleteSub(pid,sid){
   saveAndSync(); render();
 }
 
+// ─── RECURRING EVENT HELPER ─────────────────────────────────────
+function getEventsForDate(dateStr){
+  const d=new Date(dateStr+'T00:00:00');
+  return D.events.filter(ev=>{
+    if(ev.date===dateStr) return true;
+    if(!ev.repeat) return false;
+    const evD=new Date(ev.date+'T00:00:00');
+    if(d<evD) return false;
+    if(ev.repeat==='daily') return true;
+    if(ev.repeat==='weekly') return d.getDay()===evD.getDay();
+    if(ev.repeat==='monthly') return ev.mday ? d.getDate()===parseInt(ev.mday) : d.getDate()===evD.getDate();
+    if(ev.repeat==='yearly') return d.getDate()===evD.getDate() && d.getMonth()===evD.getMonth();
+    return false;
+  });
+}
+
 // ─── SCHEDULE ────────────────────────────────────────────────────
 function renderSchedule(){
-  const sorted=[...D.events].sort((a,b)=>a.date===b.date?a.start.localeCompare(b.start):a.date.localeCompare(b.date));
-  const upcoming=sorted.filter(e=>e.date>=todayStr);
-  const past=sorted.filter(e=>e.date<todayStr).reverse();
+  // Non-repeating events sorted
+  const oneOff=[...D.events.filter(e=>!e.repeat)].sort((a,b)=>a.date===b.date?a.start.localeCompare(b.start):a.date.localeCompare(b.date));
+  const upcoming=oneOff.filter(e=>e.date>=todayStr);
+  const past=oneOff.filter(e=>e.date<todayStr).reverse();
+  // Repeating events
+  const recurring=D.events.filter(e=>e.repeat);
+
   let h=`<div class="sec-hd" style="margin-top:14px"><span class="sec-lbl">예정 (${upcoming.length})</span><button class="add-btn" onclick="openSchedModal()">+</button></div>`;
-  if(upcoming.length){ let ld=''; h+=upcoming.map(e=>{ let ds=''; if(e.date!==ld){ld=e.date;const d=new Date(e.date+'T00:00:00');ds=`<div class="date-sep">${e.date===todayStr?'오늘':e.date===tmrw()?'내일':`${d.getMonth()+1}/${d.getDate()} (${DAYS[d.getDay()]})`}</div>`;} return ds+evHTML(e); }).join(''); }
+  if(upcoming.length){let ld='';h+=upcoming.map(e=>{let ds='';if(e.date!==ld){ld=e.date;const d=new Date(e.date+'T00:00:00');ds=`<div class="date-sep">${e.date===todayStr?'오늘':e.date===tmrw()?'내일':`${d.getMonth()+1}/${d.getDate()} (${DAYS[d.getDay()]})`}</div>`;}return ds+evHTML(e);}).join('');}
   else h+=`<div class="empty"><div class="empty-icon">📅</div>예정 일정 없음</div>`;
+
+  if(recurring.length){
+    h+=`<div class="sec-hd" style="margin-top:8px"><span class="sec-lbl">🔁 반복 일정 (${recurring.length})</span></div>`;
+    h+=recurring.map(e=>evHTML(e)).join('');
+  }
+
   if(past.length){
     h+=`<div class="sec-hd"><span class="sec-lbl">지난 일정</span></div>`;
-    let ld=''; h+=past.map(e=>{ let ds=''; if(e.date!==ld){ld=e.date;const d=new Date(e.date+'T00:00:00');ds=`<div class="date-sep">${d.getMonth()+1}/${d.getDate()} (${DAYS[d.getDay()]})</div>`;} return ds+evHTML(e,true); }).join('');
+    let ld='';h+=past.map(e=>{let ds='';if(e.date!==ld){ld=e.date;const d=new Date(e.date+'T00:00:00');ds=`<div class="date-sep">${d.getMonth()+1}/${d.getDate()} (${DAYS[d.getDay()]})</div>`;}return ds+evHTML(e,true);}).join('');
   }
   return h;
 }
 
 function evHTML(e, past=false){
   const col=CAT_COL[e.cat]||'acc';
+  const repLabel={'daily':'매일','weekly':'매주','monthly':'매월','yearly':'매년'};
   return `<div class="ev-item ${past?'ev-past':''}">
     <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--${col});border-radius:3px 0 0 3px"></div>
     <div class="ev-tc">${e.start}<br>${e.end}</div>
     <div class="ev-info">
       <div class="ev-title">${e.title}</div>
       ${e.note?`<div class="ev-note">${e.note}</div>`:''}
-      <div style="margin-top:4px"><span class="badge b-acc">${e.cat}</span></div>
+      <div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">
+        <span class="badge b-acc">${e.cat}</span>
+        ${e.repeat?`<span class="badge b-blue">🔁 ${repLabel[e.repeat]||e.repeat}${e.repeat==='monthly'&&e.mday?' '+e.mday+'일':''}</span>`:''}
+      </div>
     </div>
     <button class="del-btn" onclick="deleteEvent(${e.id})">×</button>
   </div>`;
@@ -860,6 +956,138 @@ function saveDiary(){
 }
 function deleteDiary(date){ delete D.diaries[date]; saveAndSync(); render(); }
 
+// ─── CALENDAR ────────────────────────────────────────────────────
+let calYear = today.getFullYear();
+let calMonth = today.getMonth();
+let calSelected = todayStr;
+
+function renderCalendar(){
+  const firstDay = new Date(calYear, calMonth, 1);
+  const lastDay = new Date(calYear, calMonth+1, 0);
+  const startWd = firstDay.getDay();
+  const monthStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}`;
+
+  // Build dot map for all dates this month
+  const dotMap = {};
+  D.events.forEach(e=>{ if(e.date && e.date.startsWith(monthStr)){ if(!dotMap[e.date]) dotMap[e.date]={}; dotMap[e.date].ev=true; } });
+  D.dailyTodos.forEach(t=>{ Object.keys(t.doneDate||{}).forEach(d=>{ if(d.startsWith(monthStr)){ if(!dotMap[d]) dotMap[d]={}; dotMap[d].todo=true; } }); });
+  Object.keys(D.diaries).forEach(d=>{ if(d.startsWith(monthStr)){ if(!dotMap[d]) dotMap[d]={}; dotMap[d].diary=true; } });
+
+  let h = `<div class="cal-wrap" style="margin-top:14px">
+    <div class="cal-nav-row">
+      <button class="cal-nav-btn" onclick="calPrev()">‹</button>
+      <span class="cal-month-lbl">${calYear}년 ${calMonth+1}월</span>
+      <button class="cal-nav-btn" onclick="calNext()">›</button>
+    </div>
+    <div class="cal-grid">`;
+
+  // Day labels
+  ['일','월','화','수','목','금','토'].forEach((d,i)=>{
+    h+=`<div class="cal-day-lbl">${d}</div>`;
+  });
+
+  // Empty cells before first day
+  for(let i=0;i<startWd;i++){
+    const prevDate = new Date(calYear, calMonth, -startWd+i+1);
+    h+=`<div class="cal-cell other"><div class="cal-num">${prevDate.getDate()}</div></div>`;
+  }
+
+  // Days of month
+  for(let d=1;d<=lastDay.getDate();d++){
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=ds===todayStr;
+    const isSel=ds===calSelected;
+    const wd=(startWd+d-1)%7;
+    const wdCls=wd===0?'sunday':wd===6?'saturday':'';
+    const dots=dotMap[ds]||{};
+    h+=`<div class="cal-cell ${isToday?'today-cell':''} ${isSel&&!isToday?'selected-cell':''} ${wdCls}" onclick="calSelect('${ds}')">
+      <div class="cal-num">${d}</div>
+      <div class="cal-dots">
+        ${dots.ev?`<div class="cal-dot ev"></div>`:''}
+        ${dots.todo?`<div class="cal-dot todo"></div>`:''}
+        ${dots.diary?`<div class="cal-dot diary"></div>`:''}
+      </div>
+    </div>`;
+  }
+
+  // Fill remaining cells
+  const remaining=(7-((startWd+lastDay.getDate())%7))%7;
+  for(let i=1;i<=remaining;i++){
+    h+=`<div class="cal-cell other"><div class="cal-num">${i}</div></div>`;
+  }
+
+  h+=`</div>`;
+
+  // Dot legend
+  h+=`<div style="display:flex;gap:12px;margin-top:10px;padding:0 4px">
+    <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--txt3)"><div class="cal-dot ev" style="width:6px;height:6px;border-radius:50%;background:var(--acc)"></div>일정</div>
+    <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--txt3)"><div class="cal-dot todo" style="width:6px;height:6px;border-radius:50%;background:var(--green)"></div>할일완료</div>
+    <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--txt3)"><div class="cal-dot diary" style="width:6px;height:6px;border-radius:50%;background:var(--pink)"></div>기록</div>
+  </div>`;
+
+  // Selected date detail
+  if(calSelected){
+    const selEvs=getEventsForDate(calSelected).sort((a,b)=>a.start.localeCompare(b.start));
+    const selDiary=D.diaries[calSelected];
+    const selDone=D.dailyTodos.filter(t=>(t.doneDate||{})[calSelected]);
+    const sd=new Date(calSelected+'T00:00:00');
+    const selLbl=`${sd.getMonth()+1}월 ${sd.getDate()}일 (${DAYS[sd.getDay()]})`;
+
+    h+=`<div class="cal-detail">
+      <div class="cal-detail-date">
+        <span>${selLbl}</span>
+        <button class="add-btn" onclick="openSchedModal()" style="font-size:14px">+</button>
+      </div>`;
+
+    if(!selEvs.length && !selDiary && !selDone.length){
+      h+=`<div class="cal-detail-empty">이 날의 기록이 없어요</div>`;
+    }
+
+    if(selEvs.length){
+      h+=`<div style="margin-bottom:8px">`;
+      selEvs.forEach(e=>{
+        const col=CAT_COL[e.cat]||'acc';
+        h+=`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)">
+          <div style="width:3px;height:32px;background:var(--${col});border-radius:2px;flex-shrink:0"></div>
+          <div>
+            <div style="font-size:13px;font-weight:500">${e.title}</div>
+            <div style="font-size:11px;color:var(--txt2);font-family:'DM Mono',monospace">${e.start} - ${e.end}</div>
+          </div>
+        </div>`;
+      });
+      h+=`</div>`;
+    }
+
+    if(selDone.length){
+      h+=`<div style="margin-bottom:8px">`;
+      selDone.forEach(t=>{
+        h+=`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--line)">
+          <div style="width:14px;height:14px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
+          <span style="font-size:12px;color:var(--txt2);text-decoration:line-through">${t.title}</span>
+          ${t.doneTimes&&t.doneTimes[calSelected]?`<span style="font-size:10px;color:var(--green);font-family:'DM Mono',monospace;margin-left:auto">${t.doneTimes[calSelected]}</span>`:''}
+        </div>`;
+      });
+      h+=`</div>`;
+    }
+
+    if(selDiary){
+      h+=`<div style="margin-top:6px">
+        ${selDiary.mood?`<span style="font-size:18px">${selDiary.mood}</span>`:''}
+        <div style="font-size:12px;color:var(--txt2);line-height:1.7;margin-top:4px;white-space:pre-wrap">${selDiary.text||''}</div>
+      </div>`;
+    }
+
+    h+=`</div>`;
+  }
+
+  h+=`</div>`;
+  return h;
+}
+
+function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} render(); }
+function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} render(); }
+function calSelect(ds){ calSelected=ds; render(); }
+
 // ─── STOCKS ──────────────────────────────────────────────────────
 function renderStocks(){
   let h=`<div style="margin-top:14px">
@@ -878,11 +1106,19 @@ function renderStocks(){
           <div><div class="stock-ticker">${s.ticker}</div><div class="stock-name" id="sn-${s.ticker}">${s.name||''}</div></div>
           <div class="stock-price"><div class="stock-val flat" id="sv-${s.ticker}">--</div><div class="stock-chg flat" id="sc2-${s.ticker}">--</div></div>
         </div>
-        <canvas class="stock-chart" id="chart-${s.ticker}" height="72"></canvas>
-        <div class="chart-range">
-          ${['1d','5d','1mo','3mo','1y'].map(r=>`<button class="cr-btn ${(s.range||'1mo')===r?'on':''}" onclick="setRange('${s.ticker}','${r}')">${r}</button>`).join('')}
+        <div class="chart-range" style="margin-top:8px">
+          <span style="font-size:10px;color:var(--txt3);font-family:'DM Mono',monospace;margin-right:4px">봉:</span>
+          ${['일','주','월'].map((r,i)=>`<button class="cr-btn ${(s.ctype||'일')===r?'on':''}" onclick="setCandleType('${s.ticker}','${r}')">${r}</button>`).join('')}
+          <span style="font-size:10px;color:var(--txt3);font-family:'DM Mono',monospace;margin-left:8px;margin-right:4px">기간:</span>
+          ${['1mo','3mo','6mo','1y','2y'].map(r=>`<button class="cr-btn ${(s.range||'3mo')===r?'on':''}" onclick="setRange('${s.ticker}','${r}')">${r}</button>`).join('')}
         </div>
-        <div class="stock-footer">
+        <div style="margin-top:6px;display:flex;gap:6px;font-size:10px;font-family:'DM Mono',monospace">
+          <label style="display:flex;align-items:center;gap:3px;color:var(--txt2);cursor:pointer"><input type="checkbox" id="bb-${s.ticker}" ${s.showBB?'checked':''} onchange="toggleBB('${s.ticker}',this.checked)"> 볼린저밴드</label>
+          <label style="display:flex;align-items:center;gap:3px;color:var(--txt2);cursor:pointer"><input type="checkbox" id="vp-${s.ticker}" ${s.showVP?'checked':''} onchange="toggleVP('${s.ticker}',this.checked)"> 매물대</label>
+        </div>
+        <canvas id="chart-${s.ticker}" style="width:100%;height:160px;margin-top:6px;display:block"></canvas>
+        <canvas id="vol-${s.ticker}" style="width:100%;height:48px;margin-top:2px;display:block"></canvas>
+        <div class="stock-footer" style="margin-top:4px">
           <span class="stock-meta" id="sm-${s.ticker}"></span>
           <button class="stock-del" onclick="deleteStock('${s.ticker}')">× 삭제</button>
         </div>
@@ -910,95 +1146,445 @@ function deleteStock(ticker){
 function setRange(ticker, range){
   const s=D.stocks.find(x=>x.ticker===ticker);
   if(s){ s.range=range; saveAndSync(); }
-  loadStockChart(ticker, range);
-  // update buttons
-  document.querySelectorAll(`#sc-${ticker} .cr-btn`).forEach(b=>{
-    b.classList.toggle('on', b.textContent===range);
-  });
+  loadStockChart(ticker);
+}
+function setCandleType(ticker, ctype){
+  const s=D.stocks.find(x=>x.ticker===ticker);
+  if(s){ s.ctype=ctype; saveAndSync(); }
+  loadStockChart(ticker);
+}
+function toggleBB(ticker, val){
+  const s=D.stocks.find(x=>x.ticker===ticker);
+  if(s){ s.showBB=val; saveAndSync(); }
+  loadStockChart(ticker);
+}
+function toggleVP(ticker, val){
+  const s=D.stocks.find(x=>x.ticker===ticker);
+  if(s){ s.showVP=val; saveAndSync(); }
+  loadStockChart(ticker);
 }
 
 function initStockCharts(){
-  D.stocks.forEach(s=>loadStockChart(s.ticker, s.range||'1mo'));
+  D.stocks.forEach(s=>loadStockChart(s.ticker));
 }
 
-async function loadStockChart(ticker, range){
+async function loadStockChart(ticker){
+  const s=D.stocks.find(x=>x.ticker===ticker);
+  const range=s?.range||'3mo';
+  const ctype=s?.ctype||'일';
+  const showBB=s?.showBB||false;
+  const showVP=s?.showVP||false;
+
   const canvas=document.getElementById('chart-'+ticker);
+  const volCanvas=document.getElementById('vol-'+ticker);
   const valEl=document.getElementById('sv-'+ticker);
   const chgEl=document.getElementById('sc2-'+ticker);
   const nameEl=document.getElementById('sn-'+ticker);
   const metaEl=document.getElementById('sm-'+ticker);
   if(!canvas) return;
 
-  // Use Yahoo Finance via allorigins proxy
-  const interval = range==='1d'?'5m':range==='5d'?'30m':range==='1mo'?'1d':range==='3mo'?'1d':'1wk';
-  const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=${range}&interval=${interval}`;
-  const proxy=`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+  // interval based on candle type and range
+  let interval='1d';
+  if(ctype==='주') interval='1wk';
+  else if(ctype==='월') interval='1mo';
 
-  try{
-    const res=await fetch(proxy);
-    const json=await res.json();
-    const data=JSON.parse(json.contents);
-    const result=data?.chart?.result?.[0];
-    if(!result) throw new Error('no data');
+  // extend range for weekly/monthly to get enough candles
+  let fetchRange=range;
+  if(ctype==='월' && ['1mo','3mo'].includes(range)) fetchRange='1y';
+  if(ctype==='주' && range==='1mo') fetchRange='3mo';
 
-    const meta=result.meta;
-    const closes=result.indicators?.quote?.[0]?.close||[];
-    const timestamps=result.timestamp||[];
-    const validPts=closes.map((c,i)=>({c,t:timestamps[i]})).filter(p=>p.c!=null);
+  const yahooUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=${fetchRange}&interval=${interval}`;
+  const proxies=[
+    `https://corsproxy.io/?${encodeURIComponent(yahooUrl)}`,
+    `https://api.allorigins.win/get?url=${encodeURIComponent(yahooUrl)}`
+  ];
 
-    if(!validPts.length) throw new Error('empty');
+  let result=null;
+  for(const proxy of proxies){
+    try{
+      const res=await fetch(proxy,{signal:AbortSignal.timeout(10000)});
+      const raw=await res.json();
+      const parsed=raw.contents?JSON.parse(raw.contents):raw;
+      if(parsed?.chart?.result?.[0]){result=parsed.chart.result[0];break;}
+    }catch(e){continue;}
+  }
 
-    const price=meta.regularMarketPrice||validPts[validPts.length-1].c;
-    const prev=meta.chartPreviousClose||validPts[0].c;
-    const change=price-prev;
-    const changePct=(change/prev*100);
-    const dir=change>0?'up':change<0?'dn':'flat';
+  if(!result){
+    if(valEl){valEl.textContent='로딩 실패';valEl.className='stock-val flat';}
+    if(chgEl){chgEl.textContent='데이터 없음';chgEl.className='stock-chg flat';}
+    return;
+  }
 
-    if(nameEl) nameEl.textContent=meta.shortName||meta.symbol||'';
-    if(valEl){ valEl.textContent=price.toFixed(price>100?2:3); valEl.className='stock-val '+dir; }
-    if(chgEl){ chgEl.textContent=`${change>=0?'+':''}${change.toFixed(2)} (${changePct>=0?'+':''}${changePct.toFixed(2)}%)`; chgEl.className='stock-chg '+dir; }
-    if(metaEl) metaEl.textContent=meta.currency||'';
+  const meta=result.meta;
+  const q=result.indicators?.quote?.[0]||{};
+  const opens=q.open||[], highs=q.high||[], lows=q.low||[], closes=q.close||[], vols=q.volume||[];
+  const timestamps=result.timestamp||[];
 
-    drawChart(canvas, validPts.map(p=>p.c), dir);
-  } catch(e){
-    if(valEl){ valEl.textContent='오류'; valEl.className='stock-val flat'; }
-    if(chgEl){ chgEl.textContent='데이터 없음'; chgEl.className='stock-chg flat'; }
+  // Build candle array
+  const candles=[];
+  for(let i=0;i<closes.length;i++){
+    if(closes[i]==null) continue;
+    candles.push({t:timestamps[i],o:opens[i]||closes[i],h:highs[i]||closes[i],l:lows[i]||closes[i],c:closes[i],v:vols[i]||0});
+  }
+  if(!candles.length) return;
+
+  // Price display
+  const price=meta.regularMarketPrice||candles[candles.length-1].c;
+  const prev=meta.chartPreviousClose||candles[0].c;
+  const change=price-prev;
+  const changePct=change/prev*100;
+  const dir=change>0?'up':change<0?'dn':'flat';
+  const UP='#2dd4a0', DN='#f96060', FLAT='#8888a8';
+  const mainColor=dir==='up'?UP:dir==='dn'?DN:FLAT;
+
+  if(nameEl) nameEl.textContent=meta.shortName||ticker;
+  if(valEl){valEl.textContent=price.toFixed(price>100?2:3);valEl.className='stock-val '+dir;}
+  if(chgEl){chgEl.textContent=`${change>=0?'+':''}${change.toFixed(2)} (${changePct>=0?'+':''}${changePct.toFixed(2)}%)`;chgEl.className='stock-chg '+dir;}
+  if(metaEl) metaEl.textContent=meta.currency||'';
+
+  // ─ Draw main chart ─
+  const DPR=window.devicePixelRatio||1;
+  const CW=canvas.offsetWidth||320, CH=160;
+  canvas.width=CW*DPR; canvas.height=CH*DPR;
+  canvas.style.width=CW+'px'; canvas.style.height=CH+'px';
+  const ctx=canvas.getContext('2d'); ctx.scale(DPR,DPR);
+
+  const pad={t:8,b:8,l:48,r:8};
+  const cw=CW-pad.l-pad.r, ch=CH-pad.t-pad.b;
+  const n=candles.length;
+  const barW=Math.max(1, Math.floor(cw/n*0.7));
+
+  const allH=candles.map(c=>c.h), allL=candles.map(c=>c.l);
+  let pMin=Math.min(...allL), pMax=Math.max(...allH);
+
+  // Bollinger Band calc (20-period, 2σ)
+  let bbUpper=[], bbMid=[], bbLower=[];
+  if(showBB){
+    for(let i=0;i<n;i++){
+      if(i<19){bbUpper.push(null);bbMid.push(null);bbLower.push(null);continue;}
+      const slice=candles.slice(i-19,i+1).map(c=>c.c);
+      const mean=slice.reduce((a,b)=>a+b,0)/20;
+      const std=Math.sqrt(slice.reduce((a,b)=>a+(b-mean)**2,0)/20);
+      bbUpper.push(mean+2*std); bbMid.push(mean); bbLower.push(mean-2*std);
+    }
+    const validBB=[...bbUpper,...bbLower].filter(x=>x!=null);
+    if(validBB.length){pMin=Math.min(pMin,...validBB);pMax=Math.max(pMax,...validBB);}
+  }
+
+  const pRange=pMax-pMin||1;
+  const py=v=>pad.t+ch-(v-pMin)/pRange*ch;
+  const px=i=>pad.l+i*(cw/n)+cw/n/2;
+
+  ctx.clearRect(0,0,CW,CH);
+
+  // Grid lines
+  ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.lineWidth=0.5;
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ch/4*i;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(CW-pad.r,y);ctx.stroke();
+    // price label
+    const pLbl=(pMax-pRange/4*i).toFixed(pMax>100?0:2);
+    ctx.fillStyle='rgba(255,255,255,0.25)';ctx.font=`${9*DPR/DPR}px monospace`;ctx.textAlign='right';
+    ctx.fillText(pLbl,pad.l-3,y+3);
+  }
+
+  // Volume Profile (매물대) — horizontal bars on right side
+  if(showVP){
+    const bins=20;
+    const binSize=pRange/bins;
+    const volByPrice=new Array(bins).fill(0);
+    candles.forEach(c=>{
+      const mid=(c.h+c.l)/2;
+      const bi=Math.min(bins-1,Math.floor((mid-pMin)/binSize));
+      volByPrice[bi]+=c.v;
+    });
+    const maxVP=Math.max(...volByPrice)||1;
+    const vpW=40; // max width of VP bars
+    ctx.globalAlpha=0.35;
+    for(let i=0;i<bins;i++){
+      const y1=pad.t+ch-(i+1)/bins*ch;
+      const y2=pad.t+ch-i/bins*ch;
+      const bw=volByPrice[i]/maxVP*vpW;
+      ctx.fillStyle='#6c63ff';
+      ctx.fillRect(CW-pad.r-bw, y1, bw, Math.max(1,y2-y1-1));
+    }
+    ctx.globalAlpha=1;
+  }
+
+  // Bollinger Bands
+  if(showBB){
+    // Fill between upper/lower
+    ctx.globalAlpha=0.1;
+    ctx.fillStyle='#6c63ff';
+    ctx.beginPath();
+    let started=false;
+    for(let i=0;i<n;i++){
+      if(bbUpper[i]==null) continue;
+      if(!started){ctx.moveTo(px(i),py(bbUpper[i]));started=true;}
+      else ctx.lineTo(px(i),py(bbUpper[i]));
+    }
+    for(let i=n-1;i>=0;i--){
+      if(bbLower[i]==null) continue;
+      ctx.lineTo(px(i),py(bbLower[i]));
+    }
+    ctx.closePath();ctx.fill();
+    ctx.globalAlpha=1;
+
+    // Upper, Mid, Lower lines
+    [[bbUpper,'#9d97ff'],[bbMid,'#6c63ff'],[bbLower,'#9d97ff']].forEach(([arr,col])=>{
+      ctx.beginPath();ctx.strokeStyle=col;ctx.lineWidth=0.8;ctx.setLineDash([3,2]);
+      let s=false;
+      for(let i=0;i<n;i++){
+        if(arr[i]==null) continue;
+        s?ctx.lineTo(px(i),py(arr[i])):ctx.moveTo(px(i),py(arr[i]));s=true;
+      }
+      ctx.stroke();ctx.setLineDash([]);
+    });
+  }
+
+  // Candles
+  for(let i=0;i<n;i++){
+    const c=candles[i];
+    const isUp=c.c>=c.o;
+    const col=isUp?UP:DN;
+    const x=px(i);
+    // Wick
+    ctx.strokeStyle=col;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(x,py(c.h));ctx.lineTo(x,py(c.l));ctx.stroke();
+    // Body
+    const bodyTop=py(Math.max(c.o,c.c));
+    const bodyBot=py(Math.min(c.o,c.c));
+    const bodyH=Math.max(1,bodyBot-bodyTop);
+    ctx.fillStyle=isUp?col+'cc':col;
+    ctx.strokeStyle=col;ctx.lineWidth=0.5;
+    ctx.fillRect(x-barW/2,bodyTop,barW,bodyH);
+    ctx.strokeRect(x-barW/2,bodyTop,barW,bodyH);
+  }
+
+  // ─ Volume chart ─
+  if(volCanvas){
+    const VH=48;
+    volCanvas.width=CW*DPR; volCanvas.height=VH*DPR;
+    volCanvas.style.width=CW+'px'; volCanvas.style.height=VH+'px';
+    const vctx=volCanvas.getContext('2d'); vctx.scale(DPR,DPR);
+    vctx.clearRect(0,0,CW,VH);
+    const maxV=Math.max(...candles.map(c=>c.v))||1;
+    const vpad={t:4,b:4,l:pad.l,r:pad.r};
+    const vh=VH-vpad.t-vpad.b;
+    for(let i=0;i<n;i++){
+      const c=candles[i];
+      const isUp=c.c>=c.o;
+      const x=px(i);
+      const bh=Math.max(1,(c.v/maxV)*vh);
+      vctx.fillStyle=(isUp?UP:DN)+'99';
+      vctx.fillRect(x-barW/2, VH-vpad.b-bh, barW, bh);
+    }
+    // Vol label
+    vctx.fillStyle='rgba(255,255,255,0.2)';vctx.font='9px monospace';vctx.textAlign='right';
+    vctx.fillText('VOL',pad.l-3,VH-vpad.b);
   }
 }
 
-function drawChart(canvas, prices, dir){
-  const ctx=canvas.getContext('2d');
-  const W=canvas.offsetWidth||280, H=72;
-  canvas.width=W*2; canvas.height=H*2; ctx.scale(2,2);
+// ─── INVEST JOURNAL ──────────────────────────────────────────────
+let investTab = 'principles';
 
-  const min=Math.min(...prices), max=Math.max(...prices);
-  const range=max-min||1;
-  const pad={t:6,b:6,l:4,r:4};
-  const w=W-pad.l-pad.r, h=H-pad.t-pad.b;
+function renderInvest(){
+  return `<div style="margin-top:14px">
+    <div class="inv-tabs">
+      <button class="inv-tab ${investTab==='principles'?'active':''}" onclick="setInvestTab('principles')">📋 원칙</button>
+      <button class="inv-tab ${investTab==='watchlist'?'active':''}" onclick="setInvestTab('watchlist')">🔍 관심종목</button>
+      <button class="inv-tab ${investTab==='reports'?'active':''}" onclick="setInvestTab('reports')">📄 리포트</button>
+    </div>
+    ${investTab==='principles'?renderPrinciples():investTab==='watchlist'?renderWatchlist():renderReports()}
+  </div>`;
+}
 
-  const x=i=>(i/(prices.length-1))*w+pad.l;
-  const y=v=>h-(v-min)/range*h+pad.t;
+function setInvestTab(t){ investTab=t; render(); }
 
-  const color=dir==='up'?'#2dd4a0':dir==='dn'?'#f96060':'#8888a8';
+// ── 원칙 ──
+let editingPrinciple = false;
+function renderPrinciples(){
+  const txt = D.investPrinciples||'';
+  if(editingPrinciple){
+    return `<div>
+      <textarea class="principle-ta" id="principleTA">${txt}</textarea>
+      <button class="save-btn" onclick="savePrinciple()" style="margin-top:8px">저장</button>
+      <button onclick="editingPrinciple=false;render()" style="width:100%;margin-top:6px;padding:10px;background:none;border:1px solid var(--line2);border-radius:var(--r);color:var(--txt2);font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif">취소</button>
+    </div>`;
+  }
+  return `<div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span class="sec-lbl">나의 투자 원칙</span>
+      <button class="add-btn" onclick="editingPrinciple=true;render()" style="font-size:13px;width:auto;padding:4px 10px;border-radius:var(--rsm)">✏️ 편집</button>
+    </div>
+    ${txt ? `<div class="principle-view">${txt}</div>` :
+      `<div class="empty"><div class="empty-icon">📋</div>투자 원칙을 작성해 보세요<br><span style="font-size:11px">매수/매도 기준, 포지션 관리 규칙 등</span></div>`}
+  </div>`;
+}
+function savePrinciple(){
+  D.investPrinciples=(document.getElementById('principleTA')||{}).value||'';
+  editingPrinciple=false;
+  saveAndSync(); render(); toast('원칙 저장됨 ✓');
+}
 
-  ctx.clearRect(0,0,W,H);
+// ── 관심종목 재무 ──
+function renderWatchlist(){
+  const list = D.watchlist||[];
+  let h = `<div>
+    <div class="stock-add-row" style="margin-bottom:12px">
+      <input class="stock-input" id="wlInput" placeholder="티커 입력 (예: AAPL, 005930.KS)" maxlength="20" onkeydown="if(event.key==='Enter')addWatchlist()">
+      <button class="stock-add-go" onclick="addWatchlist()">추가</button>
+    </div>`;
+  if(!list.length){
+    h+=`<div class="empty"><div class="empty-icon">🔍</div>관심종목을 추가하면<br>재무지표를 자동으로 불러와요</div>`;
+  } else {
+    h+=list.map(w=>`
+      <div class="fin-card" id="fin-${w.ticker}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="fin-ticker">${w.ticker}</div>
+            <div class="fin-name" id="fn-${w.ticker}">불러오는 중...</div>
+          </div>
+          <button class="del-btn" onclick="removeWatchlist('${w.ticker}')">× 삭제</button>
+        </div>
+        <div class="fin-grid">
+          <div class="fin-item"><div class="fin-lbl">매출 (TTM)</div><div class="fin-val loading" id="frev-${w.ticker}">--</div></div>
+          <div class="fin-item"><div class="fin-lbl">EPS (TTM)</div><div class="fin-val loading" id="feps-${w.ticker}">--</div></div>
+          <div class="fin-item"><div class="fin-lbl">PER</div><div class="fin-val loading" id="fper-${w.ticker}">--</div></div>
+          <div class="fin-item"><div class="fin-lbl">PBR</div><div class="fin-val loading" id="fpbr-${w.ticker}">--</div></div>
+        </div>
+        <div style="margin-top:8px">
+          <textarea placeholder="메모..." style="width:100%;background:var(--bg3);border:1px solid var(--line);border-radius:var(--rsm);padding:8px;font-size:12px;color:var(--txt);font-family:'Noto Sans KR',sans-serif;resize:none;height:56px;outline:none" onchange="saveWlMemo('${w.ticker}',this.value)">${w.memo||''}</textarea>
+        </div>
+        <a class="report-link" href="https://finance.naver.com/item/main.naver?code=${w.ticker.replace('.KS','').replace('.KQ','')}" target="_blank">📊 네이버금융에서 보기 →</a>
+      </div>`).join('');
+  }
+  h+=`</div>`;
+  return h;
+}
 
-  // Gradient fill
-  const grad=ctx.createLinearGradient(0,pad.t,0,H);
-  grad.addColorStop(0, color+'55'); grad.addColorStop(1, color+'00');
-  ctx.beginPath();
-  ctx.moveTo(x(0),y(prices[0]));
-  prices.forEach((p,i)=>{ if(i>0) ctx.lineTo(x(i),y(p)); });
-  ctx.lineTo(x(prices.length-1), H-pad.b);
-  ctx.lineTo(x(0), H-pad.b);
-  ctx.closePath();
-  ctx.fillStyle=grad; ctx.fill();
+function addWatchlist(){
+  const inp=document.getElementById('wlInput'); if(!inp) return;
+  const ticker=inp.value.trim().toUpperCase(); if(!ticker) return;
+  if((D.watchlist||[]).find(w=>w.ticker===ticker)){ toast('이미 추가된 종목이에요'); return; }
+  if(!D.watchlist) D.watchlist=[];
+  D.watchlist.push({ticker,memo:'',addedAt:todayStr});
+  saveAndSync(); render();
+  setTimeout(()=>loadFinData(ticker),300);
+}
 
-  // Line
-  ctx.beginPath();
-  ctx.moveTo(x(0),y(prices[0]));
-  prices.forEach((p,i)=>{ if(i>0) ctx.lineTo(x(i),y(p)); });
-  ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.lineJoin='round'; ctx.stroke();
+function removeWatchlist(ticker){
+  D.watchlist=(D.watchlist||[]).filter(w=>w.ticker!==ticker);
+  saveAndSync(); render();
+}
+
+function saveWlMemo(ticker,memo){
+  const w=(D.watchlist||[]).find(x=>x.ticker===ticker);
+  if(w){ w.memo=memo; saveAndSync(); }
+}
+
+async function loadFinData(ticker){
+  const yahooUrl=`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=summaryDetail,defaultKeyStatistics,financialData,incomeStatementHistory`;
+  const proxies=[
+    `https://corsproxy.io/?${encodeURIComponent(yahooUrl)}`,
+    `https://api.allorigins.win/get?url=${encodeURIComponent(yahooUrl)}`
+  ];
+  let data=null;
+  for(const proxy of proxies){
+    try{
+      const res=await fetch(proxy,{signal:AbortSignal.timeout(10000)});
+      const raw=await res.json();
+      const parsed=raw.contents?JSON.parse(raw.contents):raw;
+      if(parsed?.quoteSummary?.result?.[0]){ data=parsed.quoteSummary.result[0]; break; }
+    }catch(e){ continue; }
+  }
+  const set=(id,val)=>{ const el=document.getElementById(id); if(el){ el.textContent=val; el.classList.remove('loading'); } };
+  if(!data){ set(`fn-${ticker}`,'데이터 없음'); return; }
+  const sd=data.summaryDetail||{};
+  const ks=data.defaultKeyStatistics||{};
+  const fd=data.financialData||{};
+  const inc=data.incomeStatementHistory?.incomeStatementHistory?.[0]||{};
+  const name=fd.recommendationKey||ticker;
+  // Revenue
+  const rev=inc.totalRevenue?.raw||fd.totalRevenue?.raw;
+  const revStr=rev?formatLargeNum(rev):'--';
+  // EPS
+  const eps=ks.trailingEps?.raw;
+  const epsStr=eps!=null?eps.toFixed(2):'--';
+  // PER
+  const per=sd.trailingPE?.raw||ks.forwardPE?.raw;
+  const perStr=per!=null?per.toFixed(1):'--';
+  // PBR
+  const pbr=ks.priceToBook?.raw;
+  const pbrStr=pbr!=null?pbr.toFixed(2):'--';
+  set(`fn-${ticker}`, data.price?.shortName||ticker);
+  set(`frev-${ticker}`, revStr);
+  set(`feps-${ticker}`, epsStr);
+  set(`fper-${ticker}`, perStr);
+  set(`fpbr-${ticker}`, pbrStr);
+}
+
+function formatLargeNum(n){
+  if(n>=1e12) return (n/1e12).toFixed(2)+'T';
+  if(n>=1e9) return (n/1e9).toFixed(2)+'B';
+  if(n>=1e6) return (n/1e6).toFixed(2)+'M';
+  return n.toLocaleString();
+}
+
+function initWatchlistData(){
+  (D.watchlist||[]).forEach(w=>loadFinData(w.ticker));
+}
+
+// ── 리포트 ──
+function renderReports(){
+  const notes=D.investNotes||[];
+  let h=`<div>
+    <div class="sec-hd"><span class="sec-lbl">검토 리포트 (${notes.length})</span><button class="add-btn" onclick="openReportModal()">+</button></div>
+    <div style="margin-bottom:10px;background:var(--bg3);border-radius:var(--r);padding:10px 12px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:11px;color:var(--txt2)">네이버 리포트 검색:</span>
+      <a href="https://finance.naver.com/research/debenture_list.naver" target="_blank" class="report-link" style="margin-top:0">채권분석 →</a>
+      <a href="https://finance.naver.com/research/company_list.naver" target="_blank" class="report-link" style="margin-top:0">기업분석 →</a>
+    </div>`;
+  if(!notes.length){
+    h+=`<div class="empty"><div class="empty-icon">📄</div>리포트를 추가해 보세요<br><span style="font-size:11px">네이버 리포트 링크 + 메모를 저장해요</span></div>`;
+  } else {
+    h+=notes.sort((a,b)=>b.date.localeCompare(a.date)).map(n=>`
+      <div class="report-item">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div class="report-title">${n.title}</div>
+          <button class="del-btn" onclick="deleteReport(${n.id})">×</button>
+        </div>
+        <div class="report-meta">${n.date}${n.ticker?' · '+n.ticker:''}</div>
+        ${n.url?`<a class="report-link" href="${n.url}" target="_blank">🔗 리포트 열기 →</a>`:''}
+        ${n.memo?`<div class="report-memo" style="margin-top:6px">${n.memo}</div>`:''}
+      </div>`).join('');
+  }
+  h+=`</div>`;
+  return h;
+}
+
+function openReportModal(){
+  openModal(`<div class="sheet-title">리포트 추가</div>
+    <div class="field"><label>제목</label><input id="r-t" placeholder="리포트 제목" autofocus></div>
+    <div class="row2">
+      <div class="field"><label>종목코드 (선택)</label><input id="r-k" placeholder="AAPL, 005930"></div>
+      <div class="field"><label>날짜</label><input id="r-d" type="date" value="${todayStr}"></div>
+    </div>
+    <div class="field"><label>네이버 리포트 URL (선택)</label><input id="r-u" placeholder="https://..."></div>
+    <div class="field"><label>메모 / 핵심 내용</label><textarea id="r-m" placeholder="핵심 내용, 투자 포인트, 나의 의견..."></textarea></div>
+    <div class="modal-btns"><button class="m-cancel" onclick="closeModal()">취소</button><button class="m-ok" onclick="addReport()">저장</button></div>`);
+}
+
+function addReport(){
+  const t=(document.getElementById('r-t')||{}).value?.trim(); if(!t) return;
+  if(!D.investNotes) D.investNotes=[];
+  D.investNotes.push({id:Date.now(),title:t,ticker:document.getElementById('r-k').value.trim().toUpperCase(),date:document.getElementById('r-d').value,url:document.getElementById('r-u').value.trim(),memo:document.getElementById('r-m').value});
+  saveAndSync(); closeModal(); render();
+}
+
+function deleteReport(id){
+  D.investNotes=(D.investNotes||[]).filter(n=>n.id!==id);
+  saveAndSync(); render();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1073,12 +1659,40 @@ function openSchedModal(){
       <div class="field"><label>종료</label><input id="e-e" type="time" value="10:00"></div>
     </div>
     <div class="field"><label>카테고리</label><select id="e-c"><option>업무</option><option>개인</option><option>약속</option><option>건강</option><option>학습</option></select></div>
-    <div class="field"><label>메모 (선택)</label><input id="e-n" placeholder="추가 메모"></div>
+    <div class="field">
+      <label>반복</label>
+      <select id="e-repeat" onchange="toggleRepeatDay()">
+        <option value="">반복 없음</option>
+        <option value="daily">매일</option>
+        <option value="weekly">매주 (같은 요일)</option>
+        <option value="monthly">매월 (같은 날짜)</option>
+        <option value="yearly">매년</option>
+      </select>
+    </div>
+    <div id="repeatDayRow" style="display:none" class="field"><label>매월 몇 일?</label><input id="e-mday" type="number" min="1" max="31" placeholder="예: 1 (매월 1일)"></div>
+    <div class="field"><label>메모 (선택)</label><input id="e-n" placeholder="예: 월세 납부, 카드 결제일..."></div>
     <div class="modal-btns"><button class="m-cancel" onclick="closeModal()">취소</button><button class="m-ok" onclick="addEvent()">추가</button></div>`);
 }
+
+function toggleRepeatDay(){
+  const rep=(document.getElementById('e-repeat')||{}).value;
+  const row=document.getElementById('repeatDayRow');
+  if(row) row.style.display=rep==='monthly'?'block':'none';
+}
+
 function addEvent(){
   const t=(document.getElementById('e-t')||{}).value?.trim(); if(!t) return;
-  D.events.push({id:Date.now(),title:t,date:document.getElementById('e-d').value,start:document.getElementById('e-s').value,end:document.getElementById('e-e').value,cat:document.getElementById('e-c').value,note:document.getElementById('e-n').value});
+  const repeat=(document.getElementById('e-repeat')||{}).value||'';
+  const mday=repeat==='monthly'?(document.getElementById('e-mday')||{}).value||'':'';
+  D.events.push({
+    id:Date.now(),title:t,
+    date:document.getElementById('e-d').value,
+    start:document.getElementById('e-s').value,
+    end:document.getElementById('e-e').value,
+    cat:document.getElementById('e-c').value,
+    note:document.getElementById('e-n').value,
+    repeat, mday:mday?parseInt(mday):''
+  });
   saveAndSync(); closeModal(); render();
 }
 
