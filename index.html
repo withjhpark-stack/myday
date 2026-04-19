@@ -1110,7 +1110,7 @@ function renderStocks(){
           <span style="font-size:10px;color:var(--txt3);font-family:'DM Mono',monospace;margin-right:4px">봉:</span>
           ${['일','주','월'].map((r,i)=>`<button class="cr-btn ${(s.ctype||'일')===r?'on':''}" onclick="setCandleType('${s.ticker}','${r}')">${r}</button>`).join('')}
           <span style="font-size:10px;color:var(--txt3);font-family:'DM Mono',monospace;margin-left:8px;margin-right:4px">기간:</span>
-          ${['1mo','3mo','6mo','1y','2y'].map(r=>`<button class="cr-btn ${(s.range||'3mo')===r?'on':''}" onclick="setRange('${s.ticker}','${r}')">${r}</button>`).join('')}
+          ${['3mo','6mo','1y','2y','5y','10y'].map(r=>`<button class="cr-btn ${(s.range||'3mo')===r?'on':''}" onclick="setRange('${s.ticker}','${r}')">${r}</button>`).join('')}
         </div>
         <div style="margin-top:6px;display:flex;gap:6px;font-size:10px;font-family:'DM Mono',monospace">
           <label style="display:flex;align-items:center;gap:3px;color:var(--txt2);cursor:pointer"><input type="checkbox" id="bb-${s.ticker}" ${s.showBB?'checked':''} onchange="toggleBB('${s.ticker}',this.checked)"> 볼린저밴드</label>
@@ -1188,10 +1188,13 @@ async function loadStockChart(ticker){
   if(ctype==='주') interval='1wk';
   else if(ctype==='월') interval='1mo';
 
-  // extend range for weekly/monthly to get enough candles
+  // Yahoo Finance supports: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
   let fetchRange=range;
   if(ctype==='월' && ['1mo','3mo'].includes(range)) fetchRange='1y';
   if(ctype==='주' && range==='1mo') fetchRange='3mo';
+  // 5y and 10y use weekly candles for monthly view to get enough data
+  if(ctype==='월' && ['5y','10y'].includes(range)) interval='1mo';
+  if(ctype==='주' && ['5y','10y'].includes(range)) interval='1wk';
 
   const yahooUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=${fetchRange}&interval=${interval}`;
   const proxies=[
